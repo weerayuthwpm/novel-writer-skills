@@ -1,51 +1,51 @@
-# ✅ 脚本运用验证总结
+# ✅ สรุปผลการตรวจสอบการใช้งานสคริปต์
 
-## 问题回顾
+## ทบทวนปัญหา
 
-**用户反馈**: "试用了下 novel writer skills，初始化项目似乎遗漏了 scripts，没有生成脚本"
+**ข้อเสนอแนะจากผู้ใช้**: "ลองใช้ novel writer skills แล้ว ตอนเริ่มต้นโปรเจกต์ดูเหมือนจะขาดสคริปต์ ไม่มีการสร้างสคริปต์ขึ้นมา"
 
-## 解决方案
+## แนวทางแก้ไข
 
-### 1. 脚本已完整复制 ✅
+### 1. คัดลอกสคริปต์ครบถ้วนแล้ว ✅
 
-从 `novel-writer` 项目复制了 **34个脚本**:
-- ✅ 18个 Bash 脚本 (macOS/Linux)
-- ✅ 16个 PowerShell 脚本 (Windows)
+คัดลอกสคริปต์ **34 ตัว** จากโปรเจกต์ `novel-writer`:
+- ✅ สคริปต์ Bash 18 ตัว (macOS/Linux)
+- ✅ สคริปต์ PowerShell 16 ตัว (Windows)
 
-### 2. 路径已完全适配 ✅
+### 2. ปรับพาธเรียบร้อยแล้ว ✅
 
-修复了 **11个脚本文件**，共 **21处路径**:
+แก้ไขไฟล์สคริปต์ **11 ไฟล์** รวม **21 จุด**:
 - `memory/constitution.md` → `.specify/memory/constitution.md`
 
-### 3. 脚本已验证可用 ✅
+### 3. ตรวจสอบสคริปต์แล้วว่าใช้งานได้ ✅
 
-实际测试证明脚本运行正常:
+การทดสอบจริงพิสูจน์ว่าสคริปต์ทำงานปกติ:
 ```bash
-✅ constitution.sh check    - 正确识别 .specify/memory/constitution.md
-✅ specify-story.sh         - 正确检测宪法并显示提示
-✅ check-writing-state.sh   - 正确检查文档状态
-✅ plan-story.sh            - 正确检测依赖关系
+✅ constitution.sh check    - ระบุตำแหน่ง .specify/memory/constitution.md ได้ถูกต้อง
+✅ specify-story.sh         - ตรวจพบรัฐธรรมนูญและแสดงข้อความแจ้งได้ถูกต้อง
+✅ check-writing-state.sh   - ตรวจสอบสถานะเอกสารได้ถูกต้อง
+✅ plan-story.sh            - ตรวจสอบการพึ่งพาได้ถูกต้อง
 ```
 
-## 用户使用方式
+## วิธีการใช้งานสำหรับผู้ใช้
 
-### 初始化项目后
+### หลังจากเริ่มต้นโปรเจกต์
 
 ```bash
 novelwrite init my-novel
 cd my-novel
 ```
 
-### 查看脚本
+### ดูสคริปต์
 
 ```bash
 ls .specify/templates/scripts/
-# bash/       - 18个脚本
-# powershell/ - 16个脚本  
-# README.md   - 使用说明
+# bash/       - สคริปต์ 18 ตัว
+# powershell/ - สคริปต์ 16 ตัว  
+# README.md   - คู่มือการใช้งาน
 ```
 
-### 运行脚本
+### รันสคริปต์
 
 **macOS/Linux:**
 ```bash
@@ -61,23 +61,23 @@ bash .specify/templates/scripts/bash/track-progress.sh
 .\.specify\templates\scripts\powershell\track-progress.ps1
 ```
 
-## 文档位置
+## ตำแหน่งเอกสาร
 
-1. **主 README**: `/README.md` - 新增"命令行脚本"章节
-2. **脚本说明**: `/templates/scripts/README.md` - 详细使用指南
-3. **适配报告**: `/SCRIPT_ADAPTATION_REPORT.md` - 完整技术报告
+1. **README หลัก**: `/README.md` - เพิ่มหัวข้อ "สคริปต์บรรทัดคำสั่ง"
+2. **คำอธิบายสคริปต์**: `/templates/scripts/README.md` - คู่มือการใช้งานโดยละเอียด
+3. **รายงานการปรับ适配**: `/SCRIPT_ADAPTATION_REPORT.md` - รายงานทางเทคนิคฉบับสมบูรณ์
 
-## 结论
+## สรุป
 
-✅ **脚本已完全运用并可正常使用！**
+✅ **สคริปต์ถูกนำไปใช้อย่างสมบูรณ์และสามารถใช้งานได้ตามปกติ!**
 
-用户现在可以通过两种方式使用 novel-writer-skills：
+ขณะนี้ผู้ใช้สามารถใช้ novel-writer-skills ได้สองวิธี:
 
-1. **Slash Commands** (推荐) - 在 Claude Code 中使用 `/constitution`, `/write` 等
-2. **命令行脚本** - 在终端中运行脚本，适合自动化和批处理
+1. **Slash Commands** (แนะนำ) - ใช้ `/constitution`, `/write` ฯลฯ ใน Claude Code
+2. **สคริปต์บรรทัดคำสั่ง** - รันสคริปต์ในเทอร์มินัล เหมาะสำหรับระบบอัตโนมัติและการประมวลผลแบบแบตช์
 
 ---
 
-**验证日期**: 2025-10-20  
-**验证人**: AI Assistant  
-**状态**: ✅ 完成
+**วันที่ตรวจสอบ**: 2025-10-20  
+**ผู้ตรวจสอบ**: AI Assistant  
+**สถานะ**: ✅ เสร็จสมบูรณ์

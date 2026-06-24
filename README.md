@@ -1,127 +1,127 @@
-# Novel Writer Skills - Claude Code 专用小说创作工具
+# ทักษะการเขียนนิยาย - เครื่องมือเขียนนิยายเฉพาะสำหรับ Claude Code
 
 [![npm version](https://badge.fury.io/js/novel-writer-skills.svg)](https://www.npmjs.com/package/novel-writer-skills)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-> 🚀 专为 Claude Code 设计的 AI 智能小说创作助手
+> 🚀 ผู้ช่วยเขียนนิยายอัจฉริยะด้วย AI ที่ออกแบบมาเฉพาะสำหรับ Claude Code
 >
-> 深度集成 Slash Commands 和 Agent Skills，提供最佳创作体验
+> ผสานรวม Slash Commands และ Agent Skills อย่างลึกซึ้ง มอบประสบการณ์การเขียนที่ดีที่สุด
 
-## ✨ 核心特性
+## ✨ คุณสมบัติหลัก
 
-- 📚 **Slash Commands** - Claude Code 斜杠命令，七步方法论完整支持
-- 🤖 **Agent Skills** - AI 自动激活的知识库和智能检查系统
-- 🎯 **类型知识库** - 自动提供言情、悬疑、奇幻等类型创作惯例
-- 🔍 **智能质量检查** - 自动监控一致性、节奏、视角等问题
-- 📝 **写作技巧增强** - 对话、场景、角色等专业技巧自动应用
-- 🔌 **插件系统** - 可扩展功能，如真实人声、翻译等
+- 📚 **Slash Commands** - คำสั่ง Slash ของ Claude Code รองรับระเบียบวิธีเจ็ดขั้นตอนอย่างครบถ้วน
+- 🤖 **Agent Skills** - ฐานความรู้และระบบตรวจสอบอัจฉริยะที่ AI เปิดใช้งานโดยอัตโนมัติ
+- 🎯 **ฐานความรู้ประเภทเรื่อง** - ให้หลักปฏิบัติในการเขียนแนวโรแมนซ์ ลึกลับ แฟนตาซี และอื่นๆ โดยอัตโนมัติ
+- 🔍 **ระบบตรวจสอบคุณภาพอัจฉริยะ** - ตรวจสอบความสม่ำเสมอ จังหวะ และมุมมองอย่างอัตโนมัติ
+- 📝 **เสริมเทคนิคการเขียน** - ใช้เทคนิคเฉพาะทางด้านบทสนทนา ฉาก และตัวละครโดยอัตโนมัติ
+- 🔌 **ระบบปลั๊กอิน** - ฟังก์ชันเสริมที่ขยายได้ เช่น เสียงสมจริง การแปล ฯลฯ
 
-## 🚀 快速开始
+## 🚀 เริ่มต้นใช้งานอย่างรวดเร็ว
 
-### 1. 安装
+### 1. ติดตั้ง
 
 ```bash
 npm install -g novel-writer-skills
 ```
 
-### 2. 初始化项目
+### 2. เริ่มต้นโปรเจกต์
 
 ```bash
-# 基本用法
+# การใช้งานพื้นฐาน
 novelwrite init my-novel
 
-# 在当前目录初始化
+# เริ่มต้นในไดเรกทอรีปัจจุบัน
 novelwrite init --here
 
-# 预装插件
+# ติดตั้งปลั๊กอินล่วงหน้า
 novelwrite init my-novel --plugins authentic-voice
 ```
 
-### 3. 在 Claude Code 中开始创作
+### 3. เริ่มเขียนใน Claude Code
 
-在 Claude Code 中打开项目，使用斜杠命令：
+เปิดโปรเจกต์ใน Claude Code และใช้คำสั่ง Slash:
 
 ```text
-/constitution    # 1. 创建创作宪法
-/specify         # 2. 定义故事规格
-/clarify         # 3. 澄清关键决策
-/plan            # 4. 制定创作计划
-/tasks           # 5. 分解任务清单
-/write           # 6. AI 辅助写作
-/analyze         # 7. 质量验证分析
+/constitution    # 1. สร้างรัฐธรรมนูญการเขียน
+/specify         # 2. กำหนดข้อกำหนดของเรื่อง
+/clarify         # 3. ชี้แจงการตัดสินใจสำคัญ
+/plan            # 4. วางแผนการเขียน
+/tasks           # 5. แบ่งรายการงาน
+/write           # 6. เขียนโดยใช้ AI ช่วย
+/analyze         # 7. วิเคราะห์ตรวจสอบคุณภาพ
 ```
 
-## 🎨 Agent Skills 自动激活
+## 🎨 Agent Skills เปิดใช้งานอัตโนมัติ
 
-### 类型知识库（Genre Knowledge）
+### ฐานความรู้ประเภทเรื่อง (Genre Knowledge)
 
-当你提到特定类型时，相应的知识库会自动激活：
+เมื่อคุณกล่าวถึงประเภทเรื่องเฉพาะ ฐานความรู้ที่เกี่ยวข้องจะเปิดใช้งานโดยอัตโนมัติ:
 
-- 💕 **Romance** - 言情小说惯例和情感节奏
-- 🔍 **Mystery** - 推理悬疑技巧和线索管理
-- 🐉 **Fantasy** - 奇幻设定规范和世界构建
+- 💕 **Romance** - หลักปฏิบัติและจังหวะอารมณ์ของนวนิยายโรแมนซ์
+- 🔍 **Mystery** - เทคนิคการสืบสวนสอบสวนและการจัดการเบาะแส
+- 🐉 **Fantasy** - หลักการสร้างโลกแฟนตาซีและการสร้างจักรวาล
 
-### 写作技巧（Writing Techniques）
+### เทคนิคการเขียน (Writing Techniques)
 
-写作过程中自动应用最佳实践：
+ใช้แนวทางปฏิบัติที่ดีที่สุดโดยอัตโนมัติระหว่างการเขียน:
 
-- 💬 **Dialogue** - 对话自然度和角色声音
-- 🎬 **Scene Structure** - 场景构建和节奏控制
-- 👤 **Character Arc** - 角色弧线和成长逻辑
+- 💬 **บทสนทนา** - ความเป็นธรรมชาติของบทสนทนาและน้ำเสียงของตัวละคร
+- 🎬 **โครงสร้างฉาก** - การสร้างฉากและการควบคุมจังหวะ
+- 👤 **เส้นทางตัวละคร** - เส้นทางการพัฒนาตัวละครและตรรกะการเติบโต
 
-### 智能检查（Quality Assurance）
+### การตรวจสอบคุณภาพ (Quality Assurance)
 
-后台自动监控，主动提醒问题：
+ตรวจสอบเบื้องหลังโดยอัตโนมัติ แจ้งเตือนปัญหาอย่างเชิงรุก:
 
-- ✅ **Consistency Checker** - 一致性检查（角色、世界观、时间线）
-- 🧭 **Workflow Guide** - 引导使用七步方法论
+- ✅ **ตัวตรวจสอบความสม่ำเสมอ** - ตรวจสอบความสม่ำเสมอ (ตัวละคร โลกของเรื่อง ไทม์ไลน์)
+- 🧭 **คู่มือขั้นตอนการทำงาน** - แนะนำให้ใช้ระเบียบวิธีเจ็ดขั้นตอน
 
 ## 📚 Slash Commands
 
-### 七步方法论
+### ระเบียบวิธีเจ็ดขั้นตอน
 
-| 命令 | 功能 | 输出 |
+| คำสั่ง | ฟังก์ชัน | ผลลัพธ์ |
 |------|------|------|
-| `/constitution` | 创建创作宪法 | `.specify/memory/constitution.md` |
-| `/specify` | 定义故事规格 | `stories/[name]/specification.md` |
-| `/clarify` | 澄清模糊点（5个问题） | 更新 specification.md |
-| `/plan` | 制定创作计划 | `stories/[name]/creative-plan.md` |
-| `/tasks` | 分解任务清单 | `stories/[name]/tasks.md` |
-| `/write` | 执行章节写作 | `stories/[name]/content/chapter-XX.md` |
-| `/analyze` | 质量验证分析 | 分析报告（双模式：框架/内容） |
+| `/constitution` | สร้างรัฐธรรมนูญการเขียน | `.specify/memory/constitution.md` |
+| `/specify` | กำหนดข้อกำหนดของเรื่อง | `stories/[name]/specification.md` |
+| `/clarify` | ชี้แจงประเด็นที่ไม่ชัดเจน (5 คำถาม) | อัปเดต specification.md |
+| `/plan` | วางแผนการเขียน | `stories/[name]/creative-plan.md` |
+| `/tasks` | แบ่งรายการงาน | `stories/[name]/tasks.md` |
+| `/write` | ดำเนินการเขียนบท | `stories/[name]/content/chapter-XX.md` |
+| `/analyze` | วิเคราะห์ตรวจสอบคุณภาพ | รายงานการวิเคราะห์ (2 โหมด: โครงสร้าง/เนื้อหา) |
 
-### 追踪与验证
+### การติดตามและการตรวจสอบ
 
-| 命令 | 功能 |
+| คำสั่ง | ฟังก์ชัน |
 |------|------|
-| `/track-init` | 初始化追踪系统 |
-| `/track` | 综合追踪更新 |
-| `/plot-check` | 情节一致性检查 |
-| `/timeline` | 时间线管理 |
-| `/relations` | 角色关系追踪 |
-| `/world-check` | 世界观验证 |
+| `/track-init` | เริ่มต้นระบบติดตาม |
+| `/track` | อัปเดตการติดตามแบบครบวงจร |
+| `/plot-check` | ตรวจสอบความสม่ำเสมอของโครงเรื่อง |
+| `/timeline` | จัดการไทม์ไลน์ |
+| `/relations` | ติดตามความสัมพันธ์ของตัวละคร |
+| `/world-check` | ตรวจสอบความถูกต้องของโลกของเรื่อง |
 
-## 🔌 插件系统
+## 🔌 ระบบปลั๊กอิน
 
-### 安装插件
+### ติดตั้งปลั๊กอิน
 
 ```bash
-# 列出可用插件
+# แสดงรายการปลั๊กอินที่พร้อมใช้งาน
 novelwrite plugin:list
 
-# 安装插件
+# ติดตั้งปลั๊กอิน
 novelwrite plugin:add authentic-voice
 
-# 移除插件
+# ถอดปลั๊กอิน
 novelwrite plugin:remove authentic-voice
 ```
 
-### 官方插件
+### ปลั๊กอินอย่างเป็นทางการ
 
-- **authentic-voice** - 真实人声写作插件，提升原创度和生活质感
-- 更多插件开发中...
+- **authentic-voice** - ปลั๊กอินเขียนด้วยเสียงมนุษย์สมจริง ช่วยเพิ่มความคิดสร้างสรรค์และคุณภาพชีวิต
+- กำลังพัฒนาปลั๊กอินเพิ่มเติม...
 
-## 📖 项目结构
+## 📖 โครงสร้างโปรเจกต์
 
 ```text
 my-novel/
@@ -129,11 +129,11 @@ my-novel/
 │   ├── commands/       # Slash Commands
 │   └── skills/         # Agent Skills
 │
-├── .specify/           # Spec Kit 配置
+├── .specify/           # การกำหนดค่า Spec Kit
 │   ├── memory/
 │   │   └── constitution.md
 │   └── templates/
-│       ├── scripts/    # 命令行脚本工具
+│       ├── scripts/    # เครื่องมือสคริปต์บรรทัดคำสั่ง
 │       │   ├── bash/
 │       │   └── powershell/
 │       ├── commands/
@@ -150,13 +150,13 @@ my-novel/
 │           └── ...
 │
 ├── spec/
-│   ├── tracking/       # 追踪数据
+│   ├── tracking/       # ข้อมูลการติดตาม
 │   │   ├── plot-tracker.json
 │   │   ├── timeline.json
 │   │   ├── character-state.json
 │   │   └── relationships.json
 │   │
-│   └── knowledge/      # 知识库
+│   └── knowledge/      # ฐานความรู้
 │       ├── characters/
 │       ├── worldbuilding/
 │       └── references/
@@ -164,146 +164,146 @@ my-novel/
 └── README.md
 ```
 
-## 🆚 与 novel-writer 的关系
+## 🆚 ความสัมพันธ์กับ novel-writer
 
-| 特性 | novel-writer | novel-writer-skills |
+| คุณสมบัติ | novel-writer | novel-writer-skills |
 |------|-------------|-------------------|
-| **支持平台** | 13个AI工具（Claude、Cursor、Gemini等） | Claude Code 专用 |
-| **核心方法论** | ✅ 七步方法论 | ✅ 七步方法论 |
-| **Slash Commands** | ✅ 跨平台命令 | ✅ Claude 优化命令 |
-| **Agent Skills** | ❌ 不支持 | ✅ 深度集成 |
-| **智能检查** | ⚠️ 手动执行 | ✅ 自动监控 |
-| **类型知识库** | ⚠️ 需手动查阅 | ✅ 自动激活 |
-| **适用场景** | 需要跨平台支持 | 追求最佳体验（Claude Code） |
+| **แพลตฟอร์มที่รองรับ** | เครื่องมือ AI 13 ชนิด (Claude, Cursor, Gemini ฯลฯ) | เฉพาะ Claude Code |
+| **ระเบียบวิธีหลัก** | ✅ ระเบียบวิธีเจ็ดขั้นตอน | ✅ ระเบียบวิธีเจ็ดขั้นตอน |
+| **Slash Commands** | ✅ คำสั่งข้ามแพลตฟอร์ม | ✅ คำสั่งที่ปรับให้เหมาะกับ Claude |
+| **Agent Skills** | ❌ ไม่รองรับ | ✅ ผสานรวมอย่างลึกซึ้ง |
+| **การตรวจสอบอัจฉริยะ** | ⚠️ ดำเนินการด้วยตนเอง | ✅ ตรวจสอบอัตโนมัติ |
+| **ฐานความรู้ประเภทเรื่อง** | ⚠️ ต้องค้นหาด้วยตนเอง | ✅ เปิดใช้งานอัตโนมัติ |
+| **สถานการณ์การใช้งาน** | ต้องการรองรับหลายแพลตฟอร์ม | ต้องการประสบการณ์ที่ดีที่สุด (Claude Code) |
 
-**选择建议**：
+**คำแนะนำในการเลือก**:
 
-- 如果你使用多个AI工具 → 选择 **novel-writer**
-- 如果你专注 Claude Code → 选择 **novel-writer-skills**
+- หากคุณใช้เครื่องมือ AI หลายตัว → เลือก **novel-writer**
+- หากคุณเน้นใช้ Claude Code → เลือก **novel-writer-skills**
 
-## 🛠️ CLI 命令
+## 🛠️ คำสั่ง CLI
 
-### 项目管理
+### การจัดการโปรเจกต์
 
 ```bash
-# 初始化项目
+# เริ่มต้นโปรเจกต์
 novelwrite init <project-name>
 
-# 检查环境
+# ตรวจสอบสภาพแวดล้อม
 novelwrite check
 
-# 升级项目
+# อัปเกรดโปรเจกต์
 novelwrite upgrade
 ```
 
-### 插件管理
+### การจัดการปลั๊กอิน
 
 ```bash
-# 列出已安装插件
+# แสดงรายการปลั๊กอินที่ติดตั้ง
 novelwrite plugin:list
 
-# 安装插件
+# ติดตั้งปลั๊กอิน
 novelwrite plugin:add <plugin-name>
 
-# 移除插件
+# ถอดปลั๊กอิน
 novelwrite plugin:remove <plugin-name>
 ```
 
-## 🔧 命令行脚本（可选）
+## 🔧 สคริปต์บรรทัดคำสั่ง (ตัวเลือก)
 
-除了 Claude Code 中的 Slash Commands，项目还包含命令行脚本工具：
+นอกเหนือจาก Slash Commands ใน Claude Code แล้ว โปรเจกต์ยังมีเครื่องมือสคริปต์บรรทัดคำสั่ง:
 
-### 脚本位置
+### ตำแหน่งสคริปต์
 
-初始化项目后，脚本位于：`.specify/templates/scripts/`
+หลังจากเริ่มต้นโปรเจกต์ สคริปต์จะอยู่ที่: `.specify/templates/scripts/`
 
 ```text
 .specify/templates/scripts/
-├── bash/          # macOS/Linux 脚本
-└── powershell/    # Windows 脚本
+├── bash/          # สคริปต์สำหรับ macOS/Linux
+└── powershell/    # สคริปต์สำหรับ Windows
 ```
 
-### 使用场景
+### สถานการณ์การใช้งาน
 
-- ✅ **命令行替代** - 在终端中直接执行七步方法论
-- ✅ **自动化工作流** - 集成到 CI/CD 或批处理脚本
-- ✅ **批量操作** - 处理多个故事或批量检查
-- ✅ **独立使用** - 不依赖 Claude Code 的场景
+- ✅ **ใช้แทนบรรทัดคำสั่ง** - ดำเนินการตามระเบียบวิธีเจ็ดขั้นตอนในเทอร์มินัลโดยตรง
+- ✅ **เวิร์กโฟลว์อัตโนมัติ** - ผสานรวมกับ CI/CD หรือสคริปต์ประมวลผลแบบแบตช์
+- ✅ **การดำเนินการแบบแบตช์** - จัดการหลายเรื่องหรือตรวจสอบแบบแบตช์
+- ✅ **ใช้งานแบบอิสระ** - ในสถานการณ์ที่ไม่ต้องพึ่งพา Claude Code
 
-### 快速示例
+### ตัวอย่างอย่างรวดเร็ว
 
 **macOS/Linux:**
 
 ```bash
-# 创建宪法
+# สร้างรัฐธรรมนูญ
 bash .specify/templates/scripts/bash/constitution.sh
 
-# 定义规格
+# กำหนดข้อกำหนด
 bash .specify/templates/scripts/bash/specify-story.sh
 
-# 追踪进度
+# ติดตามความคืบหน้า
 bash .specify/templates/scripts/bash/track-progress.sh
 ```
 
 **Windows:**
 
 ```powershell
-# 创建宪法
+# สร้างรัฐธรรมนูญ
 .\.specify\templates\scripts\powershell\constitution.ps1
 
-# 定义规格
+# กำหนดข้อกำหนด
 .\.specify\templates\scripts\powershell\specify-story.ps1
 
-# 追踪进度
+# ติดตามความคืบหน้า
 .\.specify\templates\scripts\powershell\track-progress.ps1
 ```
 
-### 可用脚本
+### สคริปต์ที่พร้อมใช้งาน
 
-所有 Slash Commands 都有对应的脚本版本：
+Slash Commands ทุกคำสั่งมีเวอร์ชันสคริปต์ที่สอดคล้องกัน:
 
-| 脚本 | 功能 | 对应命令 |
+| สคริปต์ | ฟังก์ชัน | คำสั่งที่สอดคล้อง |
 |-----|------|---------|
-| `constitution` | 创建创作宪法 | `/constitution` |
-| `specify-story` | 定义故事规格 | `/specify` |
-| `plan-story` | 制定创作计划 | `/plan` |
-| `track-progress` | 追踪进度 | `/track` |
-| `check-consistency` | 一致性检查 | - |
-| 以及更多... | 查看 `.specify/templates/scripts/README.md` | - |
+| `constitution` | สร้างรัฐธรรมนูญการเขียน | `/constitution` |
+| `specify-story` | กำหนดข้อกำหนดของเรื่อง | `/specify` |
+| `plan-story` | วางแผนการเขียน | `/plan` |
+| `track-progress` | ติดตามความคืบหน้า | `/track` |
+| `check-consistency` | ตรวจสอบความสม่ำเสมอ | - |
+| และอีกมากมาย... | ดูได้ที่ `.specify/templates/scripts/README.md` | - |
 
-📖 **详细文档**：[scripts/README.md](templates/scripts/README.md)
+📖 **เอกสารรายละเอียด**: [scripts/README.md](templates/scripts/README.md)
 
-### 何时使用脚本 vs Slash Commands
+### เมื่อใดควรใช้สคริปต์ vs Slash Commands
 
-| 场景 | 推荐方式 |
+| สถานการณ์ | วิธีที่แนะนำ |
 |-----|---------|
-| 日常创作、需要 AI 协助 | ✅ Slash Commands (优先) |
-| 批量处理、自动化 | ✅ 命令行脚本 |
-| CI/CD 集成 | ✅ 命令行脚本 |
-| 快速检查验证 | ✅ 命令行脚本 |
+| การเขียนประจำวัน ต้องการความช่วยเหลือจาก AI | ✅ Slash Commands (แนะนำเป็นอันดับแรก) |
+| การประมวลผลแบบแบตช์ ระบบอัตโนมัติ | ✅ สคริปต์บรรทัดคำสั่ง |
+| การผสานรวม CI/CD | ✅ สคริปต์บรรทัดคำสั่ง |
+| การตรวจสอบและยืนยันอย่างรวดเร็ว | ✅ สคริปต์บรรทัดคำสั่ง |
 
-## 📚 文档
+## 📚 เอกสาร
 
-- [入门指南](docs/getting-started.md) - 详细安装和使用教程
-- [命令详解](docs/commands.md) - 所有命令的完整说明
-- [Skills 指南](docs/skills-guide.md) - Agent Skills 工作原理
-- [脚本工具集](templates/scripts/README.md) - 命令行脚本使用指南
-- [插件开发](docs/plugin-development.md) - 如何开发自己的插件
+- [คู่มือเริ่มต้น](docs/getting-started.md) - บทช่วยสอนการติดตั้งและการใช้งานโดยละเอียด
+- [คำอธิบายคำสั่ง](docs/commands.md) - คำอธิบายครบถ้วนของทุกคำสั่ง
+- [คู่มือ Skills](docs/skills-guide.md) - หลักการทำงานของ Agent Skills
+- [ชุดเครื่องมือสคริปต์](templates/scripts/README.md) - คู่มือการใช้สคริปต์บรรทัดคำสั่ง
+- [การพัฒนาปลั๊กอิน](docs/plugin-development.md) - วิธีพัฒนาปลั๊กอินของคุณเอง
 
-## 🤝 贡献
+## 🤝 การมีส่วนร่วม
 
-欢迎提交 Issue 和 Pull Request！
+ยินดีต้อนรับ Issue และ Pull Request!
 
-项目地址：[https://github.com/wordflowlab/novel-writer-skills](https://github.com/wordflowlab/novel-writer-skills)
+ที่อยู่โปรเจกต์: [https://github.com/wordflowlab/novel-writer-skills](https://github.com/wordflowlab/novel-writer-skills)
 
-## 📄 许可证
+## 📄 ใบอนุญาต
 
 MIT License
 
-## 🙏 致谢
+## 🙏 คำขอบคุณ
 
-本项目基于 [novel-writer](https://github.com/wordflowlab/novel-writer) 的方法论，专为 Claude Code 深度优化。
+โปรเจกต์นี้มีพื้นฐานมาจากระเบียบวิธีของ [novel-writer](https://github.com/wordflowlab/novel-writer) และปรับให้เหมาะสมสำหรับ Claude Code อย่างลึกซึ้ง
 
 ---
 
-**Novel Writer Skills** - 让 Claude Code 成为你的最佳创作伙伴！ ✨📚
+**Novel Writer Skills** - ให้ Claude Code เป็นคู่หูสร้างสรรค์ที่ดีที่สุดของคุณ! ✨📚

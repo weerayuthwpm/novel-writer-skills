@@ -1,3 +1,4 @@
+```yaml
 ---
 description: การวิเคราะห์อัจฉริยะ: เลือกเฟรมเวิร์กวิเคราะห์อัตโนมัติ (ก่อน write) หรือวิเคราะห์เนื้อหา (หลัง write) รองรับการระบุด้วยตนเองผ่าน --type
 argument-hint: [--type=framework|content]
@@ -7,7 +8,7 @@ scripts:
   sh: .specify/scripts/bash/check-analyze-stage.sh --json
   ps: .specify/scripts/powershell/check-analyze-stage.ps1 -Json
 ---
-
+```
 ทำการวิเคราะห์แบบครบวงจรอัจฉริยะสำหรับโปรเจกต์นิยาย โดยเลือกดำเนินการ **การวิเคราะห์ความสอดคล้องของเฟรมเวิร์ก** (ก่อน write) หรือ **การวิเคราะห์คุณภาพเนื้อหา** (หลัง write) โดยอัตโนมัติตามขั้นตอนการสร้างสรรค์งานในปัจจุบัน
 ---
 

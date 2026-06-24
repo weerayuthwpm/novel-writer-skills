@@ -1,20 +1,20 @@
-# 脚本适配验证报告
+# รายงานผลการตรวจสอบความเข้ากันได้ของสคริปต์
 
-**日期**: 2025-10-20  
-**版本**: v1.0.5  
-**状态**: ✅ 完成并验证通过
+**วันที่**: 2025-10-20  
+**เวอร์ชัน**: v1.0.5  
+**สถานะ**: ✅ เสร็จสมบูรณ์และผ่านการตรวจสอบแล้ว
 
-## 📋 任务概述
+## 📋 ภาพรวมงาน
 
-将 `novel-writer` 项目的命令行脚本移植到 `novel-writer-skills`，并适配项目结构差异。
+ย้ายสคริปต์บรรทัดคำสั่งจากโปรเจกต์ `novel-writer` ไปยัง `novel-writer-skills` และปรับให้เข้ากับความแตกต่างของโครงสร้างโปรเจกต์
 
-## ✅ 完成内容
+## ✅ เนื้อหาที่ดำเนินการเสร็จสิ้น
 
-### 1. 脚本复制 (18 bash + 16 PowerShell)
+### 1. การคัดลอกสคริปต์ (18 bash + 16 PowerShell)
 
-从 `other/novel-writer/scripts/` 复制到 `templates/scripts/`：
+คัดลอกจาก `other/novel-writer/scripts/` ไปยัง `templates/scripts/`:
 
-**Bash 脚本** (18个):
+**สคริปต์ Bash** (18 ตัว):
 - analyze-story.sh
 - check-consistency.sh
 - check-plot.sh
@@ -34,7 +34,7 @@
 - text-audit.sh
 - track-progress.sh
 
-**PowerShell 脚本** (16个):
+**สคริปต์ PowerShell** (16 ตัว):
 - analyze-story.ps1
 - check-analyze-stage.ps1
 - check-consistency.ps1
@@ -52,143 +52,143 @@
 - text-audit.ps1
 - track-progress.ps1
 
-### 2. 路径适配
+### 2. การปรับพาธ (Path Adaptation)
 
-#### 关键差异
+#### ความแตกต่างที่สำคัญ
 
-| 文件类型 | novel-writer | novel-writer-skills | 修改状态 |
+| ประเภทไฟล์ | novel-writer | novel-writer-skills | สถานะการแก้ไข |
 |---------|-------------|---------------------|----------|
-| 宪法文件 | `memory/constitution.md` | `.specify/memory/constitution.md` | ✅ 已修改 |
-| 故事规格 | `stories/*/specification.md` | `stories/*/specification.md` | ✅ 无需修改 |
-| 创作计划 | `stories/*/creative-plan.md` | `stories/*/creative-plan.md` | ✅ 无需修改 |
-| 追踪数据 | `spec/tracking/*.json` | `spec/tracking/*.json` | ✅ 无需修改 |
+| ไฟล์รัฐธรรมนูญ | `memory/constitution.md` | `.specify/memory/constitution.md` | ✅ แก้ไขแล้ว |
+| ข้อกำหนดของเรื่อง | `stories/*/specification.md` | `stories/*/specification.md` | ✅ ไม่ต้องแก้ไข |
+| แผนการเขียน | `stories/*/creative-plan.md` | `stories/*/creative-plan.md` | ✅ ไม่ต้องแก้ไข |
+| ข้อมูลการติดตาม | `spec/tracking/*.json` | `spec/tracking/*.json` | ✅ ไม่ต้องแก้ไข |
 
-#### 修改的脚本文件
+#### ไฟล์สคริปต์ที่ถูกแก้ไข
 
-**Bash 脚本** (6个文件，15处修改):
-1. `constitution.sh` - 1处
-2. `check-writing-state.sh` - 2处
-3. `tasks-story.sh` - 2处
-4. `plan-story.sh` - 2处
-5. `specify-story.sh` - 1处
-6. `analyze-story.sh` - 1处
+**สคริปต์ Bash** (6 ไฟล์, 15 จุดแก้ไข):
+1. `constitution.sh` - 1 จุด
+2. `check-writing-state.sh` - 2 จุด
+3. `tasks-story.sh` - 2 จุด
+4. `plan-story.sh` - 2 จุด
+5. `specify-story.sh` - 1 จุด
+6. `analyze-story.sh` - 1 จุด
 
-**PowerShell 脚本** (5个文件，6处修改):
-1. `constitution.ps1` - 1处
-2. `analyze-story.ps1` - 1处
-3. `check-writing-state.ps1` - 1处
-4. `specify-story.ps1` - 1处
-5. `plan-story.ps1` - 2处
+**สคริปต์ PowerShell** (5 ไฟล์, 6 จุดแก้ไข):
+1. `constitution.ps1` - 1 จุด
+2. `analyze-story.ps1` - 1 จุด
+3. `check-writing-state.ps1` - 1 จุด
+4. `specify-story.ps1` - 1 จุด
+5. `plan-story.ps1` - 2 จุด
 
-**总计**: 11个脚本文件，21处路径修改
+**รวมทั้งหมด**: 11 ไฟล์สคริปต์, 21 จุดแก้ไขพาธ
 
-### 3. 文档更新
+### 3. การอัปเดตเอกสาร
 
 #### templates/scripts/README.md
-- ✅ 创建完整的脚本使用说明（4700+ 字符）
-- ✅ 添加路径适配说明
-- ✅ 提供跨平台使用示例
-- ✅ 说明与 Slash Commands 的关系
+- ✅ สร้างคู่มือการใช้สคริปต์ฉบับสมบูรณ์ (มากกว่า 4700 ตัวอักษร)
+- ✅ เพิ่มคำอธิบายการปรับพาธ
+- ✅ ให้ตัวอย่างการใช้งานข้ามแพลตฟอร์ม
+- ✅ อธิบายความสัมพันธ์กับ Slash Commands
 
 #### README.md
-- ✅ 添加"命令行脚本（可选）"章节
-- ✅ 更新项目结构说明
-- ✅ 添加使用示例和对比表
-- ✅ 添加脚本文档链接
+- ✅ เพิ่มหัวข้อ "สคริปต์บรรทัดคำสั่ง (ตัวเลือก)"
+- ✅ อัปเดตคำอธิบายโครงสร้างโปรเจกต์
+- ✅ เพิ่มตารางเปรียบเทียบและตัวอย่างการใช้งาน
+- ✅ เพิ่มลิงก์ไปยังเอกสารสคริปต์
 
-### 4. CLI 优化
+### 4. การปรับปรุง CLI
 
 #### src/cli.ts
-- ✅ 移除对空 `.specify/scripts` 目录的创建
-- ✅ 脚本通过 `templates` 自动部署到 `.specify/templates/scripts/`
+- ✅ ลบการสร้างไดเรกทอรี `.specify/scripts` ที่ว่างเปล่า
+- ✅ สคริปต์ถูกติดตั้งผ่าน `templates` ไปยัง `.specify/templates/scripts/` โดยอัตโนมัติ
 
-## 🧪 验证测试
+## 🧪 การทดสอบตรวจสอบ
 
-### 测试环境
-- 操作系统: macOS (darwin 24.6.0)
+### สภาพแวดล้อมการทดสอบ
+- ระบบปฏิบัติการ: macOS (darwin 24.6.0)
 - Node.js: v18+
 - Shell: bash
 
-### 测试步骤
+### ขั้นตอนการทดสอบ
 
 ```bash
-# 1. 编译项目
-npm run build  # ✅ 成功
+# 1. คอมไพล์โปรเจกต์
+npm run build  # ✅ สำเร็จ
 
-# 2. 创建测试项目
-novelwrite init script-test-novel --no-git  # ✅ 成功
+# 2. สร้างโปรเจกต์ทดสอบ
+novelwrite init script-test-novel --no-git  # ✅ สำเร็จ
 
-# 3. 验证脚本目录结构
+# 3. ตรวจสอบโครงสร้างไดเรกทอรีสคริปต์
 ls .specify/templates/scripts/
-# bash/       ✅ 存在
-# powershell/ ✅ 存在
-# README.md   ✅ 存在
+# bash/       ✅ มีอยู่
+# powershell/ ✅ มีอยู่
+# README.md   ✅ มีอยู่
 
-# 4. 测试 bash 脚本
+# 4. ทดสอบสคริปต์ bash
 bash .specify/templates/scripts/bash/constitution.sh check
-# ✅ 能正确识别 .specify/memory/constitution.md
+# ✅ สามารถระบุตำแหน่ง .specify/memory/constitution.md ได้ถูกต้อง
 
 bash .specify/templates/scripts/bash/specify-story.sh test-story
-# ✅ 能检测宪法并显示正确提示
+# ✅ ตรวจพบรัฐธรรมนูญและแสดงข้อความแจ้งที่ถูกต้อง
 
 bash .specify/templates/scripts/bash/check-writing-state.sh
-# ✅ 能检查文档状态并给出正确建议
+# ✅ ตรวจสอบสถานะเอกสารและให้คำแนะนำที่ถูกต้อง
 
 bash .specify/templates/scripts/bash/plan-story.sh
-# ✅ 能检测前置依赖并给出正确提示
+# ✅ ตรวจสอบการพึ่งพาก่อนหน้าและให้ข้อความแจ้งที่ถูกต้อง
 ```
 
-### 测试结果
+### ผลการทดสอบ
 
-| 脚本 | 路径识别 | 依赖检测 | 输出正确 | 状态 |
+| สคริปต์ | การระบุพาธ | การตรวจสอบการพึ่งพา | ผลลัพธ์ถูกต้อง | สถานะ |
 |-----|---------|---------|---------|------|
-| constitution.sh | ✅ | ✅ | ✅ | 通过 |
-| specify-story.sh | ✅ | ✅ | ✅ | 通过 |
-| check-writing-state.sh | ✅ | ✅ | ✅ | 通过 |
-| plan-story.sh | ✅ | ✅ | ✅ | 通过 |
+| constitution.sh | ✅ | ✅ | ✅ | ผ่าน |
+| specify-story.sh | ✅ | ✅ | ✅ | ผ่าน |
+| check-writing-state.sh | ✅ | ✅ | ✅ | ผ่าน |
+| plan-story.sh | ✅ | ✅ | ✅ | ผ่าน |
 
-**结论**: 所有测试脚本运行正常，路径适配成功！
+**สรุป**: สคริปต์ทดสอบทั้งหมดทำงานปกติ ปรับพาธสำเร็จ!
 
-## 📊 项目影响
+## 📊 ผลกระทบต่อโปรเจกต์
 
-### 用户体验提升
+### การปรับปรุงประสบการณ์ผู้ใช้
 
-1. **完整的脚本工具集**: 用户现在拥有34个脚本工具
-2. **跨平台支持**: bash (macOS/Linux) + PowerShell (Windows)
-3. **自动化能力**: 可以集成到 CI/CD 和批处理工作流
-4. **双重选择**: Slash Commands (主要) + 命令行脚本 (补充)
+1. **ชุดเครื่องมือสคริปต์ที่สมบูรณ์**: ผู้ใช้มีเครื่องมือสคริปต์ 34 ตัว
+2. **รองรับหลายแพลตฟอร์ม**: bash (macOS/Linux) + PowerShell (Windows)
+3. **ความสามารถในการทำงานอัตโนมัติ**: สามารถผสานรวมกับ CI/CD และเวิร์กโฟลว์แบบแบตช์
+4. **ทางเลือกสองทาง**: Slash Commands (หลัก) + สคริปต์บรรทัดคำสั่ง (เสริม)
 
-### 部署结构
+### โครงสร้างหลังการติดตั้ง
 
-初始化后的用户项目：
+โปรเจกต์ผู้ใช้หลังจากเริ่มต้น:
 
 ```
 my-novel/
 ├── .specify/
 │   ├── memory/
-│   │   └── constitution.md  # 脚本已适配此路径
+│   │   └── constitution.md  # สคริปต์ปรับพาธมาที่นี่แล้ว
 │   └── templates/
 │       └── scripts/
-│           ├── bash/        # 18个脚本
-│           ├── powershell/  # 16个脚本
+│           ├── bash/        # 18 สคริปต์
+│           ├── powershell/  # 16 สคริปต์
 │           └── README.md
 ├── stories/
 └── spec/
     └── tracking/
 ```
 
-### 使用方式
+### วิธีการใช้งาน
 
-**方式一: Slash Commands (推荐)**
+**วิธีที่ 1: Slash Commands (แนะนำ)**
 ```
-在 Claude Code 中使用:
+ใช้ใน Claude Code:
 /constitution
 /specify
 /write
 ...
 ```
 
-**方式二: 命令行脚本**
+**วิธีที่ 2: สคริปต์บรรทัดคำสั่ง**
 ```bash
 # macOS/Linux
 bash .specify/templates/scripts/bash/constitution.sh check
@@ -197,36 +197,35 @@ bash .specify/templates/scripts/bash/constitution.sh check
 .\.specify\templates\scripts\powershell\constitution.ps1 check
 ```
 
-## 🎯 与 novel-writer 的兼容性
+## 🎯 ความเข้ากันได้กับ novel-writer
 
-| 方面 | 状态 | 说明 |
+| ด้าน | สถานะ | คำอธิบาย |
 |-----|------|------|
-| 脚本功能 | ✅ 完全兼容 | 所有功能保持一致 |
-| 路径结构 | ⚠️ 部分差异 | 已适配差异（宪法文件路径） |
-| 使用方法 | ✅ 完全兼容 | 脚本参数和用法相同 |
-| 七步方法论 | ✅ 完全兼容 | 方法论流程一致 |
+| ฟังก์ชันสคริปต์ | ✅ เข้ากันได้อย่างสมบูรณ์ | ฟังก์ชันทั้งหมดเหมือนเดิม |
+| โครงสร้างพาธ | ⚠️ แตกต่างบางส่วน | ปรับความแตกต่างแล้ว (พาธไฟล์รัฐธรรมนูญ) |
+| วิธีการใช้งาน | ✅ เข้ากันได้อย่างสมบูรณ์ | พารามิเตอร์และวิธีการใช้สคริปต์เหมือนเดิม |
+| ระเบียบวิธีเจ็ดขั้นตอน | ✅ เข้ากันได้อย่างสมบูรณ์ | ขั้นตอนวิธีการเหมือนเดิม |
 
-## 📝 注意事项
+## 📝 ข้อควรระวัง
 
-1. **脚本位置**: 脚本在 `.specify/templates/scripts/` 而非 `.specify/scripts/`
-2. **宪法路径**: 使用 `.specify/memory/constitution.md` 而非 `memory/constitution.md`
-3. **优先使用**: 推荐优先使用 Claude Code 的 Slash Commands
-4. **脚本用途**: 适合批处理、自动化、CI/CD 集成
+1. **ตำแหน่งสคริปต์**: สคริปต์อยู่ที่ `.specify/templates/scripts/` ไม่ใช่ `.specify/scripts/`
+2. **พาธรัฐธรรมนูญ**: ใช้ `.specify/memory/constitution.md` ไม่ใช่ `memory/constitution.md`
+3. **การใช้งานหลัก**: แนะนำให้ใช้ Slash Commands ของ Claude Code เป็นหลัก
+4. **วัตถุประสงค์ของสคริปต์**: เหมาะสำหรับการประมวลผลแบบแบตช์ ระบบอัตโนมัติ และการผสานรวม CI/CD
 
-## 🚀 后续建议
+## 🚀 ข้อเสนอแนะเพิ่มเติม
 
-1. **用户反馈**: 收集脚本使用反馈，优化体验
-2. **持续同步**: 与 novel-writer 保持脚本功能同步
-3. **文档完善**: 根据用户需求补充更多使用示例
-4. **测试覆盖**: 添加自动化测试确保脚本兼容性
+1. **ข้อเสนอแนะจากผู้ใช้**: รวบรวมความคิดเห็นการใช้งานสคริปต์เพื่อปรับปรุงประสบการณ์
+2. **การซิงโครไนซ์อย่างต่อเนื่อง**: รักษาความสอดคล้องของฟังก์ชันสคริปต์กับ novel-writer
+3. **พัฒนาเอกสาร**: เพิ่มตัวอย่างการใช้งานเพิ่มเติมตามความต้องการของผู้ใช้
+4. **ขอบเขตการทดสอบ**: เพิ่มการทดสอบอัตโนมัติเพื่อรับประกันความเข้ากันได้ของสคริปต์
 
-## ✨ 总结
+## ✨ สรุป
 
-✅ **脚本移植完成**: 34个脚本全部复制并适配  
-✅ **路径修复完成**: 21处路径已正确修改  
-✅ **文档更新完成**: README 和使用说明已更新  
-✅ **测试验证通过**: 所有测试脚本运行正常  
-✅ **用户可用**: 立即可以使用命令行脚本工具
+✅ **การย้ายสคริปต์เสร็จสมบูรณ์**: คัดลอกและปรับสคริปต์ทั้งหมด 34 ตัวแล้ว  
+✅ **การแก้ไขพาธเสร็จสมบูรณ์**: แก้ไขพาธ 21 จุดถูกต้องแล้ว  
+✅ **การอัปเดตเอกสารเสร็จสมบูรณ์**: อัปเดต README และคู่มือการใช้งานแล้ว  
+✅ **การทดสอบผ่าน**: สคริปต์ทดสอบทั้งหมดทำงานปกติ  
+✅ **พร้อมให้ผู้ใช้ใช้งาน**: สามารถใช้เครื่องมือสคริปต์บรรทัดคำสั่งได้ทันที
 
-**novel-writer-skills 现在完全支持命令行脚本工作流！** 🎉
-
+**novel-writer-skills รองรับเวิร์กโฟลว์สคริปต์บรรทัดคำสั่งอย่างสมบูรณ์แล้ว!** 🎉

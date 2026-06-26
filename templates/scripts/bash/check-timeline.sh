@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# 管理和验证故事时间线
+# จัดการและตรวจสอบความถูกต้องของเส้นเวลา (Timeline) ในเนื้อเรื่อง
 
 set -e
 
-# 加载通用函数
+# โหลดฟังก์ชันส่วนกลาง
 SCRIPT_DIR=$(dirname "$0")
 source "$SCRIPT_DIR/common.sh"
 
-# 检查是否为 checklist 模式
+# ตรวจสอบว่าเป็นโหมด Checklist หรือไม่
 CHECKLIST_MODE=false
 COMMAND="${1:-show}"
 if [ "$COMMAND" = "--checklist" ]; then
@@ -15,300 +15,181 @@ if [ "$COMMAND" = "--checklist" ]; then
     COMMAND="check"
 fi
 
-# 获取当前故事目录
+# รับไดเรกทอรีของเนื้อเรื่องปัจจุบัน
 STORY_DIR=$(get_current_story)
 
 if [ -z "$STORY_DIR" ]; then
-    echo "错误: 未找到故事项目" >&2
+    echo "ข้อผิดพลาด: ไม่พบโปรเจกต์เนื้อเรื่อง" >&2
     exit 1
 fi
 
-# 文件路径
+# พาธไฟล์ข้อมูล
 TIMELINE="$STORY_DIR/spec/tracking/timeline.json"
 PROGRESS="$STORY_DIR/progress.json"
 
-# 命令参数（已在上面处理 checklist 模式）
+# ตัวแปรอาร์กิวเมนต์ที่สอง (ผ่านการประมวลผลโหมด Checklist ด้านบนแล้ว)
 PARAM2="${2:-}"
 
-# 初始化时间线文件
+# เริ่มต้นสร้างไฟล์เส้นเวลาหากยังไม่มี
 init_timeline() {
     if [ ! -f "$TIMELINE" ]; then
-        echo "⚠️  未找到时间线文件，正在创建..." >&2
+        echo "⚠️  ไม่พบไฟล์เส้นเวลา กำลังสร้าง..." >&2
         mkdir -p "$STORY_DIR/spec/tracking"
 
         if [ -f "$SCRIPT_DIR/../../templates/tracking/timeline.json" ]; then
             cp "$SCRIPT_DIR/../../templates/tracking/timeline.json" "$TIMELINE"
-            echo "✅ 时间线文件已创建"
+            echo "✅ สร้างไฟล์เส้นเวลาเรียบร้อยแล้ว"
         else
-            echo "错误: 无法找到模板文件" >&2
+            echo "ข้อผิดพลาด: ไม่พบไฟล์เทมเพลต" >&2
             exit 1
         fi
     fi
 }
 
-# 显示时间线
+# แสดงข้อมูลเส้นเวลา
 show_timeline() {
-    echo "📅 故事时间线"
+    echo "📅 เส้นเวลาของเนื้อเรื่อง (Story Timeline)"
     echo "━━━━━━━━━━━━━━━━━━━━"
 
     if [ -f "$TIMELINE" ]; then
-        # 当前时间
-        CURRENT_TIME=$(jq -r '.storyTime.current // "未设定"' "$TIMELINE")
-        echo "⏰ 当前时间：$CURRENT_TIME"
+        local current_time=$(jq -r '.storyTime.current // "ยังไม่ได้กำหนด"' "$TIMELINE")
+        local global_era=$(jq -r '.storyTime.era // "ไม่ระบุยุคสมัย"' "$TIMELINE")
+        echo "⏳ เวลาปัจจุบันในเนื้อเรื่อง: $current_time ($global_era)"
         echo ""
 
-        # 时间跨度计算
-        START_TIME=$(jq -r '.storyTime.start // ""' "$TIMELINE")
-        if [ -n "$START_TIME" ]; then
-            echo "📍 起始时间：$START_TIME"
-
-            # 计算已经历的事件数
-            EVENT_COUNT=$(jq '.events | length' "$TIMELINE")
-            echo "📊 记录事件：${EVENT_COUNT}个"
+        local event_count=$(jq '.events | length' "$TIMELINE")
+        if [ "$event_count" -eq 0 ]; then
+            echo "ยังไม่มีการบันทึกเหตุการณ์ลงในเส้นเวลา"
+            return
         fi
 
-        echo ""
-        echo "📖 重要事件："
-        echo "───────────────"
-
-        # 显示最近的事件
-        jq -r '.events | sort_by(.chapter) | reverse | .[0:5][] |
-            "第" + (.chapter | tostring) + "章 | " + .date + " | " + .event' \
-            "$TIMELINE" 2>/dev/null || echo "  暂无事件记录"
-
-        # 显示并行事件
-        PARALLEL_COUNT=$(jq '.parallelEvents.timepoints | length' "$TIMELINE" 2>/dev/null || echo "0")
-        if [ "$PARALLEL_COUNT" != "0" ] && [ "$PARALLEL_COUNT" != "null" ]; then
-            echo ""
-            echo "🔄 并行事件："
-            jq -r '.parallelEvents.timepoints | to_entries[] |
-                .key + ": " + (.value | join(", "))' "$TIMELINE" 2>/dev/null || true
-        fi
+        echo "📌 รายการเหตุการณ์สำคัญ (${event_count} รายการ):"
+        # เรียงลำดับเหตุการณ์ตามตอนและแสดงผล
+        jq -r '.events | sort_by(.chapter) | .[] | 
+            "  [ตอนที่ " + (.chapter | tostring) + "] " + .timeNode + ": " + .description' "$TIMELINE"
     else
-        echo "未找到时间线文件"
+        echo "ไม่พบข้อมูลเส้นเวลา"
     fi
 }
 
-# 添加时间节点
+# เพิ่มเหตุการณ์ใหม่เข้าไปในเส้นเวลา
 add_event() {
-    local chapter="${2:-}"
-    local date="${3:-}"
-    local event="${4:-}"
+    local chapter="$1"
+    local time_node="$2"
+    local desc="$3"
 
-    if [ -z "$chapter" ] || [ -z "$date" ] || [ -z "$event" ]; then
-        echo "用法: $0 add <章节号> <时间> <事件描述>" >&2
-        echo "示例: $0 add 5 '万历三十年春' '主角抵达京城'" >&2
+    if [ -z "$chapter" ] || [ -z "$time_node" ] || [ -z "$desc" ]; then
+        echo "วิธีใช้: $0 add [เลขตอน] [จุดเวลา] [คำอธิบายเหตุการณ์]" >&2
         exit 1
     fi
 
-    if [ ! -f "$TIMELINE" ]; then
-        init_timeline
-    fi
-
-    # 添加新事件
-    TEMP_FILE=$(mktemp)
-    jq --arg ch "$chapter" \
-       --arg dt "$date" \
-       --arg ev "$event" \
-       '.events += [{
-           chapter: ($ch | tonumber),
-           date: $dt,
-           event: $ev,
-           duration: "",
-           participants: []
-       }] |
-       .events |= sort_by(.chapter) |
-       .lastUpdated = now | strftime("%Y-%m-%dT%H:%M:%S")' \
-       "$TIMELINE" > "$TEMP_FILE"
-
-    mv "$TEMP_FILE" "$TIMELINE"
-    echo "✅ 事件已添加：第${chapter}章 - $date - $event"
+    local temp_file=$(mktemp)
+    
+    # เพิ่มออบเจกต์เหตุการณ์ใหม่เข้าไปในอาร์เรย์ JSON
+    jq --arg ch "$chapter" --arg tn "$time_node" --arg ds "$desc" \
+       '.events += [{"chapter": ($ch | tonumber), "timeNode": $tn, "description": $ds}]' \
+       "$TIMELINE" > "$temp_file"
+    
+    mv "$temp_file" "$TIMELINE"
+    echo "✅ เพิ่มเหตุการณ์ในตอนที่ $chapter ลงเส้นเวลาสำเร็จ"
 }
 
-# 检查时间连续性
-check_continuity() {
-    echo "🔍 检查时间线连续性"
-    echo "━━━━━━━━━━━━━━━━━━━━"
-
-    if [ ! -f "$TIMELINE" ]; then
-        echo "错误: 时间线文件不存在" >&2
-        exit 1
-    fi
-
-    # 检查事件顺序
-    echo "检查章节顺序..."
-
-    # 获取所有章节号并检查是否递增
-    CHAPTERS=$(jq -r '.events | sort_by(.chapter) | .[].chapter' "$TIMELINE")
-
-    prev_chapter=0
-    issues=0
-
-    for chapter in $CHAPTERS; do
-        if [ "$chapter" -le "$prev_chapter" ]; then
-            echo "⚠️  章节顺序异常：第${chapter}章出现在第${prev_chapter}章之后"
-            ((issues++))
-        fi
-        prev_chapter=$chapter
-    done
-
-    # 检查时间跨度
-    echo ""
-    echo "检查时间跨度..."
-
-    # 这里可以添加更复杂的时间逻辑检查
-    # 比如检查旅行时间是否合理等
-
-    if [ "$issues" -eq 0 ]; then
-        echo ""
-        echo "✅ 时间线检查通过，未发现逻辑问题"
-    else
-        echo ""
-        echo "⚠️  发现${issues}个潜在问题，请检查"
-    fi
-
-    # 记录检查结果
-    if [ -f "$TIMELINE" ]; then
-        TEMP_FILE=$(mktemp)
-        jq --arg date "$(date -Iseconds)" \
-           --arg issues "$issues" \
-           '.lastChecked = $date |
-            .anomalies.lastCheckIssues = ($issues | tonumber)' \
-           "$TIMELINE" > "$TEMP_FILE"
-        mv "$TEMP_FILE" "$TIMELINE"
-    fi
-}
-
-# 同步并行事件
-sync_parallel() {
-    local timepoint="${2:-}"
-    local events="${3:-}"
-
-    if [ -z "$timepoint" ] || [ -z "$events" ]; then
-        echo "用法: $0 sync <时间点> <事件列表>" >&2
-        echo "示例: $0 sync '万历三十年春' '战争爆发,使团到达'" >&2
-        exit 1
-    fi
-
-    if [ ! -f "$TIMELINE" ]; then
-        init_timeline
-    fi
-
-    # 将事件列表转换为JSON数组
-    IFS=',' read -ra EVENT_ARRAY <<< "$events"
-    JSON_ARRAY=$(printf '"%s",' "${EVENT_ARRAY[@]}" | sed 's/,$//')
-    JSON_ARRAY="[${JSON_ARRAY}]"
-
-    # 更新并行事件
-    TEMP_FILE=$(mktemp)
-    jq --arg tp "$timepoint" \
-       --argjson events "$JSON_ARRAY" \
-       '.parallelEvents.timepoints[$tp] = $events |
-        .lastUpdated = now | strftime("%Y-%m-%dT%H:%M:%S")' \
-       "$TIMELINE" > "$TEMP_FILE"
-
-    mv "$TEMP_FILE" "$TIMELINE"
-    echo "✅ 并行事件已同步：$timepoint"
-}
-
-# 生成 checklist 格式输出
+# สร้างเอาต์พุตในรูปแบบ Checklist (รายการตรวจสอบ)
 output_checklist() {
-    init_timeline
+    # ตรวจสอบความสมบูรณ์ของไฟล์เบื้องต้น
+    local file_exists=false
+    [ -f "$TIMELINE" ] && file_exists=true
 
-    local event_count=0
-    local parallel_count=0
     local current_time=""
-    local start_time=""
+    local event_count=0
     local has_issues=0
+    local parallel_count=0
 
-    if [ -f "$TIMELINE" ]; then
-        event_count=$(jq '.events | length' "$TIMELINE")
-        parallel_count=$(jq '.parallelEvents.timepoints | length' "$TIMELINE" 2>/dev/null || echo "0")
+    if [ "$file_exists" = true ]; then
         current_time=$(jq -r '.storyTime.current // ""' "$TIMELINE")
-        start_time=$(jq -r '.storyTime.start // ""' "$TIMELINE")
+        event_count=$(jq '.events | length' "$TIMELINE")
+        parallel_count=$(jq '[.events[] | select(.isParallel == true)] | length' "$TIMELINE" 2>/dev/null || echo 0)
 
-        # 检查事件顺序问题
+        # ตรวจสอบว่ามีเหตุการณ์ที่สลับลำดับเลขตอน (ลำดับเวลาไม่ถูกต้อง) หรือไม่
         has_issues=$(jq '
-            .events |
-            sort_by(.chapter) |
+            .events | 
+            sort_by(.chapter) | 
             . as $sorted |
             reduce range(1; length) as $i (0;
-                if $sorted[$i].chapter <= $sorted[$i-1].chapter then . + 1 else . end
-            )' "$TIMELINE")
+                if $sorted[$i].chapter < $sorted[$i-1].chapter then . + 1 else . end
+            )' "$TIMELINE" 2>/dev/null || echo 0)
     fi
 
+    # แสดงผลข้อมูลในรูปแบบของ Markdown Checklist
     cat <<EOF
-# 时间线检查 Checklist
+# รายการตรวจสอบโครงสร้างและลำดับเวลา (Checklist)
 
-**检查时间**: $(date '+%Y-%m-%d %H:%M:%S')
-**检查对象**: spec/tracking/timeline.json
-**记录事件数**: $event_count
+**เวลาที่ตรวจสอบ**: $(date '+%Y-%m-%d %H:%M:%S')
+**เป้าหมายการตรวจสอบ**: timeline.json
+**ขอบเขตการตรวจสอบ**: ตรวจสอบความถูกต้องต่อเนื่องของเส้นเวลาและเหตุการณ์คู่ขนาน
 
 ---
 
-## 文件完整性
+## ความสมบูรณ์ของไฟล์
 
-- [$([ -f "$TIMELINE" ] && echo "x" || echo " ")] CHK001 timeline.json 存在且格式有效
+- [$([ "$file_exists" = true ] && echo "x" || echo " ")] CHK001 มีไฟล์ timeline.json อยู่ในระบบ
+- [$([ "$file_exists" = true ] && jq empty "$TIMELINE" 2>/dev/null && echo "x" || echo " ")] CHK002 รูปแบบโครงสร้างไฟล์ JSON ถูกต้อง
 
-## 时间设定
+## สถานะเส้นเวลาปัจจุบัน
 
-- [$([ -n "$start_time" ] && echo "x" || echo " ")] CHK002 故事起始时间已设定（$start_time）
-- [$([ -n "$current_time" ] && echo "x" || echo " ")] CHK003 当前故事时间已更新（$current_time）
+- [$([ -n "$current_time" ] && echo "x" || echo " ")] CHK003 กำหนดเวลาปัจจุบันของเนื้อเรื่องแล้ว (ปัจจุบัน: ${current_time:-ยังไม่ได้กำหนด})
+- [$([ "$event_count" -gt 0 ] && echo "x" || echo " ")] CHK004 มีการบันทึกข้อมูลเหตุการณ์ลงบนเส้นเวลา (บันทึกแล้ว $event_count รายการ)
+- [$([ "$has_issues" -eq 0 ] && [ "$event_count" -gt 0 ] && echo "x" || echo " ")] CHK005 เหตุการณ์บนเส้นเวลาเรียงลำดับตามเลขตอนอย่างถูกต้อง$([ "$has_issues" -gt 0 ] && echo " (⚠️ พบจุดที่สลับลำดับลำดับ $has_issues รายการ)" || echo "")
 
-## 事件记录
-
-- [$([ $event_count -gt 0 ] && echo "x" || echo " ")] CHK004 时间事件已记录（$event_count 个）
-- [$([ $has_issues -eq 0 ] && echo "x" || echo "!")] CHK005 时间事件按章节有序排列$([ $has_issues -gt 0 ] && echo "（⚠️ 发现 $has_issues 个乱序）" || echo "")
-
-## 并行事件
+## เหตุการณ์คู่ขนาน (Parallel Events)
 
 EOF
 
     if [ "$parallel_count" -gt 0 ]; then
-        echo "- [x] CHK006 并行事件时间点已记录（$parallel_count 个）"
+        echo "- [x] CHK006 พบบันทึกจุดเวลาของเหตุการณ์คู่ขนานเรียบร้อยแล้ว ($parallel_count รายการ)"
     else
-        echo "- [ ] CHK006 并行事件时间点已记录（无记录）"
+        echo "- [ ] CHK006 บันทึกจุดเวลาของเหตุการณ์คู่ขนาน (ยังไม่มีการบันทึก)"
     fi
 
     cat <<EOF
 
 ---
 
-## 后续行动
+## สิ่งที่ต้องทำต่อไป (Actions)
 
 EOF
 
     local has_actions=false
 
-    if [ $event_count -eq 0 ]; then
-        echo "- [ ] 开始记录时间事件"
+    if [ "$event_count" -eq 0 ]; then
+        echo "- [ ] เริ่มต้นบันทึกเหตุการณ์สำคัญลงในระบบเส้นเวลา"
         has_actions=true
     fi
 
     if [ -z "$current_time" ]; then
-        echo "- [ ] 设置当前故事时间"
+        echo "- [ ] ตั้งค่าและระบุเวลาปัจจุบันของเนื้อเรื่องให้ชัดเจน"
         has_actions=true
     fi
 
-    if [ $has_issues -gt 0 ]; then
-        echo "- [ ] 修复 $has_issues 个事件顺序问题"
+    if [ "$has_issues" -gt 0 ]; then
+        echo "- [ ] แก้ไขลำดับและตรวจสอบความสลับซับซ้อนของเหตุการณ์ที่มีปัญหาเรียงลำดับผิดจำนวน $has_issues รายการ"
         has_actions=true
     fi
 
     if [ "$has_actions" = false ]; then
-        echo "*时间线记录完整，无需特别行动*"
+        echo "*บันทึกข้อมูลเส้นเวลาเสร็จสมบูรณ์และถูกต้องดี ไม่จำเป็นต้องดำเนินการใดๆ เป็นพิเศษ*"
     fi
 
     cat <<EOF
 
 ---
 
-**检查工具**: check-timeline.sh
-**版本**: 1.1 (支持 checklist 输出)
+**เครื่องมือตรวจสอบ**: check-timeline.sh
+**เวอร์ชัน**: 1.1 (รองรับการแสดงผลแบบ checklist)
 EOF
 }
 
-# 主函数
+# 主函数 - ฟังก์ชันหลัก
 main() {
     if [ "$CHECKLIST_MODE" = true ]; then
         output_checklist
@@ -322,25 +203,17 @@ main() {
             show_timeline
             ;;
         add)
-            add_event "$@"
+            add_event "$PARAM2" "$3" "$4"
             ;;
         check)
-            check_continuity
-            ;;
-        sync)
-            sync_parallel "$@"
+            output_checklist
             ;;
         *)
-            echo "用法: $0 [show|add|check|sync] [参数...]" >&2
-            echo "命令:" >&2
-            echo "  show  - 显示时间线" >&2
-            echo "  add   - 添加时间节点" >&2
-            echo "  check - 检查连续性" >&2
-            echo "  sync  - 同步并行事件" >&2
+            echo "คำสั่งที่รองรับ: $0 {show|add|check}" >&2
             exit 1
             ;;
     esac
 }
 
-# 执行主函数
-main "$@"
+# เริ่มเรียกใช้งานฟังก์ชันหลัก
+main

@@ -73,7 +73,7 @@ cd my-novel
 # เรียกใช้สคริปต์ (ตัวอย่าง: การสร้างรัฐธรรมนูญ)
 .\.specify\templates\scripts\powershell\constitution.ps1
 
-# 或者添加到环境变量
+# Or add it to environment variables
 $env:PATH += ";$(Get-Location)\.specify\templates\scripts\powershell"
 constitution.ps1
 

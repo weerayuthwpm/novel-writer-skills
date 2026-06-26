@@ -109,7 +109,7 @@ check_completed_content() {
             echo "งานเขียนล่าสุด:"
             for file in $(ls -t "$content_dir"/*.md 2>/dev/null | head -n 3); do
                 local filename=$(basename "$file")
-                local words=$(count_chinese_words "$file")
+                local words=$(count_thai_words "$file")
                 local status="✅"
 
                 if [ "$words" -lt "$min_words" ]; then

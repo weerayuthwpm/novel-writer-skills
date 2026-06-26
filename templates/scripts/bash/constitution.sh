@@ -1,64 +1,64 @@
 #!/bin/bash
 
-# 小说创作宪法管理脚本
-# 用于 /constitution 命令
+# สคริปต์จัดการรัฐธรรมนูญแห่งการสร้างสรรค์นิยาย
+# สำหรับใช้ร่วมกับคำสั่ง /constitution
 
 set -e
 
-# Source common functions
+# โหลดฟังก์ชันสากล (Common Functions)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/common.sh"
 
-# 获取命令参数
+# รับอาร์กิวเมนต์คำสั่ง (ค่าเริ่มต้นคือ check)
 COMMAND="${1:-check}"
 
-# Get project root
+# รับไดเรกทอรีรากของโปรเจกต์ (Project Root)
 PROJECT_ROOT=$(get_project_root)
 cd "$PROJECT_ROOT"
 
-# 定义文件路径
+# กำหนดพาธไฟล์รัฐธรรมนูญ (Constitution File Path)
 CONSTITUTION_FILE=".specify/memory/constitution.md"
 
 case "$COMMAND" in
     check)
-        # 检查宪法文件是否存在
+        # ตรวจสอบว่ามีไฟล์รัฐธรรมนูญอยู่แล้วหรือไม่
         if [ -f "$CONSTITUTION_FILE" ]; then
-            echo "✅ 宪法文件已存在：$CONSTITUTION_FILE"
-            # 提取版本信息
-            VERSION=$(grep -E "^- 版本：" "$CONSTITUTION_FILE" 2>/dev/null | cut -d'：' -f2 | tr -d ' ' || echo "未知")
-            UPDATED=$(grep -E "^- 最后修订：" "$CONSTITUTION_FILE" 2>/dev/null | cut -d'：' -f2 | tr -d ' ' || echo "未知")
-            echo "  版本：$VERSION"
-            echo "  最后修订：$UPDATED"
+            echo "✅ พบไฟล์รัฐธรรมนูญเรียบร้อยแล้วที่：$CONSTITUTION_FILE"
+            # ดึงข้อมูลเวอร์ชัน
+            VERSION=$(grep -E "^- เวอร์ชั่น：" "$CONSTITUTION_FILE" 2>/dev/null | cut -d'：' -f2 | tr -d ' ' || echo "ไม่ระบุ")
+            UPDATED=$(grep -E "^- การแก้ไขครั้งสุดท้าย：" "$CONSTITUTION_FILE" 2>/dev/null | cut -d'：' -f2 | tr -d ' ' || echo "ไม่ระบุ")
+            echo "  เวอร์ชัน：$VERSION"
+            echo "  แก้ไขล่าสุด：$UPDATED"
             exit 0
         else
-            echo "❌ 尚未创建宪法文件"
-            echo "  建议：运行 /constitution 创建创作宪法"
+            echo "❌ ยังไม่ได้สร้างไฟล์รัฐธรรมนูญ"
+            echo "  ข้อเสนอแนะ：กรุณารันคำสั่ง /constitution เพื่อสร้างรัฐธรรมนูญแห่งการสร้างสรรค์"
             exit 1
         fi
         ;;
 
     init)
-        # 初始化宪法文件
+        # เริ่มต้นสร้างไฟล์รัฐธรรมนูญ (Initialization)
         mkdir -p "$(dirname "$CONSTITUTION_FILE")"
 
         if [ -f "$CONSTITUTION_FILE" ]; then
-            echo "宪法文件已存在，准备更新"
+            echo "พบไฟล์รัฐธรรมนูญอยู่แล้ว เตรียมดำเนินการอัปเดต"
         else
-            echo "准备创建新的宪法文件"
+            echo "เตรียมดำเนินการสร้างไฟล์รัฐธรรมนูญฉบับใหม่"
         fi
         ;;
 
     validate)
-        # 验证宪法文件格式
+        # ตรวจสอบความถูกต้องของรูปแบบไฟล์รัฐธรรมนูญ
         if [ ! -f "$CONSTITUTION_FILE" ]; then
-            echo "错误：宪法文件不存在"
+            echo "ข้อผิดพลาด：ไม่พบไฟล์รัฐธรรมนูญ"
             exit 1
         fi
 
-        echo "验证宪法文件..."
+        echo "กำลังตรวจสอบความถูกต้องของไฟล์รัฐธรรมนูญ..."
 
-        # 检查必要章节
-        REQUIRED_SECTIONS=("核心价值观" "质量标准" "创作风格" "内容规范" "读者契约")
+        # ตรวจสอบหัวข้อที่จำเป็นต้องมี (Required Sections)
+        REQUIRED_SECTIONS=("ค่านิยมหลัก" "มาตรฐานคุณภาพ" "สไตล์การสร้างสรรค์" "ข้อกำหนดเนื้อหา" "ข้อตกลงร่วมกับผู้อ่าน")
         MISSING_SECTIONS=()
 
         for section in "${REQUIRED_SECTIONS[@]}"; do
@@ -68,47 +68,47 @@ case "$COMMAND" in
         done
 
         if [ ${#MISSING_SECTIONS[@]} -gt 0 ]; then
-            echo "⚠️ 缺少以下章节："
+            echo "⚠️ ขาดหัวข้อหลักดังต่อไปนี้："
             for section in "${MISSING_SECTIONS[@]}"; do
                 echo "  - $section"
             done
         else
-            echo "✅ 所有必要章节都存在"
+            echo "✅ มีหัวข้อหลักที่จำเป็นครบถ้วน"
         fi
 
-        # 检查版本信息
+        # ตรวจสอบข้อมูลเวอร์ชัน
         if grep -q "^- 版本：" "$CONSTITUTION_FILE"; then
-            echo "✅ 版本信息完整"
+            echo "✅ ข้อมูลเวอร์ชันครบถ้วน"
         else
-            echo "⚠️ 缺少版本信息"
+            echo "⚠️ ขาดข้อมูลเวอร์ชัน"
         fi
         ;;
 
     export)
-        # 导出宪法摘要
+        # ส่งออกสรุปสาระสำคัญของรัฐธรรมนูญ
         if [ ! -f "$CONSTITUTION_FILE" ]; then
-            echo "错误：宪法文件不存在"
+            echo "ข้อผิดพลาด：ไม่พบไฟล์รัฐธรรมนูญ"
             exit 1
         fi
 
-        echo "# 创作宪法摘要"
+        echo "# สรุปสาระสำคัญของรัฐธรรมนูญแห่งการสร้างสรรค์"
         echo ""
 
-        # 提取核心原则
-        echo "## 核心原则"
-        grep -A 1 "^### 原则" "$CONSTITUTION_FILE" | grep "^**声明**" | cut -d'：' -f2- || echo "（未找到原则声明）"
+        # ดึงข้อมูลหลักการสำคัญ
+        echo "## หลักการสำคัญ"
+        grep -A 1 "^### โดยหลักการแล้ว" "$CONSTITUTION_FILE" | grep "^**คำแถลง**" | cut -d'：' -f2- || echo "（ไม่พบการประกาศหลักการ）"
 
         echo ""
-        echo "## 质量底线"
-        grep -A 1 "^### 标准" "$CONSTITUTION_FILE" | grep "^**要求**" | cut -d'：' -f2- || echo "（未找到质量标准）"
+        echo "## เกณฑ์มาตรฐานคุณภาพขั้นต่ำ"
+        grep -A 1 "^### มาตรฐาน" "$CONSTITUTION_FILE" | grep "^**จำเป็นต้อง**" | cut -d'：' -f2- || echo "（ไม่พบมาตรฐานคุณภาพ）"
 
         echo ""
-        echo "详细内容请查看：$CONSTITUTION_FILE"
+        echo "ตรวจสอบรายละเอียดเพิ่มเติมได้ที่：$CONSTITUTION_FILE"
         ;;
 
     *)
-        echo "未知命令：$COMMAND"
-        echo "支持的命令：check, init, validate, export"
+        echo "คำสั่งไม่ถูกต้อง：$COMMAND"
+        echo "คำสั่งที่รองรับได้แก่：check, init, validate, export"
         exit 1
         ;;
 esac

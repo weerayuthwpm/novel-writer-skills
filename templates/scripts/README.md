@@ -6,9 +6,9 @@
 
 ```text
 scripts/
-├── bash/          # สคริปต์สำหรับ macOS/Linux[cite: 8]
-├── powershell/    # สคริปต์สำหรับ Windows[cite: 8]
-└── README.md      # เอกสารฉบับนี้[cite: 8]
+├── bash/          # สคริปต์สำหรับ macOS/Linux
+├── powershell/    # สคริปต์สำหรับ Windows
+└── README.md      # เอกสารฉบับนี้
 
 ```
 

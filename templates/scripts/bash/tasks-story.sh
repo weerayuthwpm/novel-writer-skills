@@ -1,25 +1,25 @@
 #!/bin/bash
 
-# 任务分解脚本
-# 用于 /tasks 命令
+# สคริปต์ย่อยสลายและแยกงานเขียน
+# สำหรับใช้ร่วมกับคำสั่ง /tasks
 
 set -e
 
-# Source common functions
+# โหลดฟังก์ชันสากล (Common Functions)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/common.sh"
 
-# Parse arguments
+# รับอาร์กิวเมนต์คำสั่ง
 STORY_NAME=""
 if [ $# -gt 0 ]; then
     STORY_NAME="$1"
 fi
 
-# Get project root
+# รับไดเรกทอรีรากของโปรเจกต์ (Project Root)
 PROJECT_ROOT=$(get_project_root)
 cd "$PROJECT_ROOT"
 
-# 确定故事名称
+# ตรวจสอบเพื่อระบุชื่อเรื่องนิยาย
 if [ -z "$STORY_NAME" ]; then
     STORY_NAME=$(get_active_story)
 fi
@@ -29,68 +29,68 @@ SPEC_FILE="$STORY_DIR/specification.md"
 PLAN_FILE="$STORY_DIR/creative-plan.md"
 TASKS_FILE="$STORY_DIR/tasks.md"
 
-echo "任务分解"
-echo "========"
-echo "故事：$STORY_NAME"
+echo "การย่อยสลายงานเขียน (Task Decomposition)"
+echo "====================================="
+echo "เรื่อง：$STORY_NAME"
 echo ""
 
-# 检查前置文档
+# ตรวจสอบเอกสารก่อนหน้า (Prerequisites Check)
 missing=()
 
 if [ ! -f ".specify/memory/constitution.md" ]; then
-    missing+=("宪法文件")
+    missing+=("ไฟล์รัฐธรรมนูญ (Constitution)")
 fi
 
 if [ ! -f "$SPEC_FILE" ]; then
-    missing+=("规格文件")
+    missing+=("文件规格 ไฟล์ข้อกำหนดเฉพาะ (Specification)")
 fi
 
 if [ ! -f "$PLAN_FILE" ]; then
-    missing+=("计划文件")
+    missing+=("文件计划 ไฟล์แผนงานสร้างสรรค์ (Creative Plan)")
 fi
 
 if [ ${#missing[@]} -gt 0 ]; then
-    echo "⚠️ 缺少以下前置文档："
+    echo "⚠️ ขาดเอกสารก่อนหน้าดังต่อไปนี้："
     for doc in "${missing[@]}"; do
         echo "  - $doc"
     done
     echo ""
-    echo "请先完成："
+    echo "กรุณาดำเนินการขั้นตอนต่อไปนี้ให้เสร็จสิ้นก่อน："
     if [ ! -f ".specify/memory/constitution.md" ]; then
-        echo "  1. /constitution - 创建创作宪法"
+        echo "  1. /constitution - สร้างรัฐธรรมนูญแห่งการสร้างสรรค์"
     fi
     if [ ! -f "$SPEC_FILE" ]; then
-        echo "  2. /specify - 定义故事规格"
+        echo "  2. /specify       - กำหนดข้อกำหนดเฉพาะของเรื่อง"
     fi
     if [ ! -f "$PLAN_FILE" ]; then
-        echo "  3. /plan - 制定创作计划"
+        echo "  3. /plan          - จัดทำแผนงานสร้างสรรค์"
     fi
     exit 1
 fi
 
-# 检查任务文件
+# ตรวจสอบไฟล์รายการงาน (Tasks File)
 if [ -f "$TASKS_FILE" ]; then
     echo ""
-    echo "📋 任务文件已存在，将更新现有任务"
+    echo "📋 พบไฟล์รายการงานอยู่แล้ว ระบบจะดำเนินการอัปเดตงานที่มีอยู่"
 
-    # 显示任务统计
+    # แสดงผลสถิติจำนวนงาน
     total_tasks=$(grep -c "^- \[" "$TASKS_FILE" 2>/dev/null || echo "0")
     completed_tasks=$(grep -c "^- \[x\]" "$TASKS_FILE" 2>/dev/null || echo "0")
-    echo "  总任务数：$total_tasks"
-    echo "  已完成：$completed_tasks"
+    echo "  งานทั้งหมด：$total_tasks งาน"
+    echo "  เสร็จสิ้นแล้ว：$completed_tasks งาน"
 else
     echo ""
-    echo "📝 将创建新的任务清单"
+    echo "📝 กำลังสร้างรายการงานเขียน (Task Checklist) ฉบับใหม่"
 fi
 
 echo ""
-echo "任务文件路径：$TASKS_FILE"
+echo "พาธไฟล์รายการงาน：$TASKS_FILE"
 echo ""
-echo "准备就绪，可以分解任务"
+echo "ระบบพร้อมแล้ว สามารถเริ่มต้นย่อยสลายงานเขียนได้"
 echo ""
-echo "任务分解将包括："
-echo "  - 章节写作任务（基于计划）"
-echo "  - 角色档案完善"
-echo "  - 世界观文档补充"
-echo "  - 质量检查节点"
-echo "  - 验证和修订任务"
+echo "การย่อยสลายงานเขียนจะครอบคลุมถึง："
+echo "  - งานเขียนในแต่ละบท (อิงตามแผนงาน)"
+echo "  - การปรับปรุงและพัฒนาแฟ้มประวัติตัวละคร"
+echo "  - การเพิ่มเติมข้อมูลเอกสารการตั้งค่าโลก (เวิลด์เซ็ตติง)"
+echo "  - จุดตรวจสอบตรวจสอบคุณภาพเนื้อหา (Quality Gates)"
+echo "  - งานตรวจสอบความถูกต้องและการปรับปรุงแก้ไข"

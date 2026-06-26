@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# 通用函数库
+# คลังฟังก์ชันสากล (Common Function Library)
 
-# 获取项目根目录
+# ฟังก์ชันรับไดเรกทอรีรากของโปรเจกต์ (Project Root)
 get_project_root() {
     if [ -f ".specify/config.json" ]; then
         pwd
     else
-        # 向上查找包含 .specify 的目录
+        # ค้นหาขึ้นไปด้านบนเรื่อยๆ เพื่อหาไดเรกทอรีที่บรรจุโฟลเดอร์ .specify
         current=$(pwd)
         while [ "$current" != "/" ]; do
             if [ -f "$current/.specify/config.json" ]; then
@@ -15,17 +15,17 @@ get_project_root() {
             fi
             current=$(dirname "$current")
         done
-        echo "错误: 未找到小说项目根目录" >&2
+        echo "ข้อผิดพลาด: ไม่พบไดเรกทอรีรากของโปรเจกต์นิยาย" >&2
         exit 1
     fi
 }
 
-# 获取当前故事目录
+# ฟังก์ชันรับไดเรกทอรีของโปรเจกต์เนื้อเรื่องปัจจุบัน (Current Story Directory)
 get_current_story() {
     PROJECT_ROOT=$(get_project_root)
     STORIES_DIR="$PROJECT_ROOT/stories"
 
-    # 找到最新的故事目录
+    # ค้นหาไดเรกทอรีเนื้อเรื่องที่อัปเดตล่าสุด
     if [ -d "$STORIES_DIR" ]; then
         latest=$(ls -t "$STORIES_DIR" 2>/dev/null | head -1)
         if [ -n "$latest" ]; then
@@ -34,25 +34,25 @@ get_current_story() {
     fi
 }
 
-# 获取活跃故事名称（只返回名称，不返回路径）
+# ฟังก์ชันรับชื่อเรื่องปัจจุบันที่กำลังเปิดทำงาน (ส่งคืนเฉพาะชื่อ ไม่ส่งคืนพาธ)
 get_active_story() {
     story_dir=$(get_current_story)
     if [ -n "$story_dir" ]; then
         basename "$story_dir"
     else
-        # 如果没有故事，返回默认名称
+        # หากยังไม่มีการสร้างเนื้อเรื่อง ให้ส่งคืนชื่อเริ่มต้นตามวันที่ปัจจุบัน
         echo "story-$(date +%Y%m%d)"
     fi
 }
 
-# 创建带编号的目录
+# ฟังก์ชันสร้างไดเรกทอรีแบบรันหมายเลขลำดับ (Numbered Directory)
 create_numbered_dir() {
     base_dir="$1"
     prefix="$2"
 
     mkdir -p "$base_dir"
 
-    # 找到最高编号
+    # ค้นหาหมายเลขลำดับที่สูงที่สุดที่มีอยู่ปัจจุบัน
     highest=0
     for dir in "$base_dir"/*; do
         [ -d "$dir" ] || continue
@@ -64,17 +64,17 @@ create_numbered_dir() {
         fi
     done
 
-    # 返回下一个编号
+    # ส่งคืนหมายเลขลำดับถัดไป (ในรูปแบบเลข 3 หลัก เช่น 001, 002)
     next=$((highest + 1))
     printf "%03d" "$next"
 }
 
-# 输出 JSON（用于与 AI 助手通信）
+# ฟังก์ชันส่งออกข้อมูล JSON (สำหรับใช้สื่อสารกับผู้ช่วย AI)
 output_json() {
     echo "$1"
 }
 
-# 确保文件存在
+# ฟังก์ชันตรวจสอบและรับประกันว่าไฟล์ต้องมีอยู่จริง (หากไม่มีให้สร้างหรือคัดลอกมา)
 ensure_file() {
     file="$1"
     template="$2"
@@ -88,8 +88,8 @@ ensure_file() {
     fi
 }
 
-# 准确的中文字数统计
-# 排除Markdown标记、空格、换行符，只统计实际内容
+# ฟังก์ชันนับจำนวนคำภาษาจีนอย่างแม่นยำ
+# ทำการคัดกรองเครื่องหมาย Markdown, ช่องว่าง และการเว้นบรรทัดออก เพื่อนับเฉพาะเนื้อหาจริงเท่านั้น
 count_chinese_words() {
     local file="$1"
 
@@ -98,15 +98,20 @@ count_chinese_words() {
         return
     fi
 
-    # 移除Markdown标记和格式符号，然后统计字符
-    # 1. 移除代码块
-    # 2. 移除标题标记 (#)
-    # 3. 移除强调标记 (* 和 _)
-    # 4. 移除链接标记 ([ ] ( ))
-    # 5. 移除引用标记 (>)
-    # 6. 移除列表标记 (- *)
-    # 7. 移除空格、换行、制表符
-    # 8. 统计剩余字符数
+    # ลบเครื่องหมายและรูปแบบสัญลักษณ์ของ Markdown ออก จากนั้นทำการนับตัวอักษรที่เหลือ
+    # 1. ลบบล็อกโค้ด (Code Blocks ```)
+    # 2. ลบเครื่องหมายหัวข้อหลัก/ย่อย (#)
+    # 3. ลบเครื่องหมายเน้นข้อความตัวหนา (** และ __)
+    # 4. ลบเครื่องหมายตัวเอียง (*)
+    # 5. ลบเครื่องหมายขีดล่าง (_)
+    # 6. ลบวงเล็บเหลี่ยมของลิงก์ ([ ])
+    # 7. ลบ URL ในวงเล็บ (http...)
+    # 8. ลบสัญลักษณ์บล็อกคำพูดโควต (>)
+    # 9. ลบเครื่องหมายรายการสัญลักษณ์ (- *)
+    # 10. ลบเครื่องหมายรายการแบบตัวเลข (1., 2.)
+    # 11. ลบช่องว่าง เว้นบรรทัด และแท็บ (Whitespace) ทั้งหมด
+    # 12. ลบเครื่องหมายวรรคตอน (Punctuation) ทั้งหมด
+    # 13. แยกนับจำนวนตัวอักษรที่เหลือจริงทั้งหมด
     local word_count=$(cat "$file" | \
         sed '/^```/,/^```/d' | \
         sed 's/^#\+[[:space:]]*//' | \
@@ -129,23 +134,23 @@ count_chinese_words() {
     echo "$word_count"
 }
 
-# 显示友好的字数信息
-# 参数: 文件路径, 最小字数(可选), 最大字数(可选)
+# ฟังก์ชันแสดงข้อมูลสถิติจำนวนคำที่เป็นมิตรต่อผู้ใช้งาน
+# อาร์กิวเมนต์: พาธไฟล์, จำนวนคำขั้นต่ำ (ไม่บังคับ), จำนวนคำสูงสุด (ไม่บังคับ)
 show_word_count_info() {
     local file="$1"
     local min_words="${2:-0}"
     local max_words="${3:-999999}"
     local actual_words=$(count_chinese_words "$file")
 
-    echo "字数：$actual_words"
+    echo "จำนวนคำ：$actual_words"
 
     if [ "$min_words" -gt 0 ]; then
         if [ "$actual_words" -lt "$min_words" ]; then
-            echo "⚠️ 未达到最低字数要求（最小：${min_words}）"
+            echo "⚠️ จำนวนคำยังไม่ถึงเกณฑ์ขั้นต่ำที่กำหนด（ขั้นต่ำ: ${min_words} คำ）"
         elif [ "$actual_words" -gt "$max_words" ]; then
-            echo "⚠️ 超过最大字数限制（最大：${max_words}）"
+            echo "⚠️ จำนวนคำเกินกว่าขีดจำกัดสูงสุดที่กำหนด（สูงสุด: ${max_words} คำ）"
         else
-            echo "✅ 符合字数要求（${min_words}-${max_words}）"
+            echo "✅ จำนวนคำถูกต้องตรงตามมาตรฐาน（${min_words}-${max_words} คำ）"
         fi
     fi
 }

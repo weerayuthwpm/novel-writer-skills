@@ -38,7 +38,7 @@ export class PluginManager {
   }
 
   /**
-   * 扫描并加载所有插件
+   * สแกนและโหลดปลั๊กอินทั้งหมด
    */
   async loadPlugins(): Promise<void> {
     try {
@@ -46,24 +46,24 @@ export class PluginManager {
       const plugins = await this.scanPlugins();
 
       if (plugins.length === 0) {
-        logger.info('没有发现插件');
+        logger.info('ไม่พบปลั๊กอิน');
         return;
       }
 
-      logger.info(`发现 ${plugins.length} 个插件`);
+      logger.info(`พบปลั๊กอินทั้งหมด ${plugins.length} ตัว`);
 
       for (const pluginName of plugins) {
         await this.loadPlugin(pluginName);
       }
 
-      logger.success('所有插件加载完成');
+      logger.success('โหลดปลั๊กอินทั้งหมดเสร็จสิ้น');
     } catch (error) {
-      logger.error('加载插件失败:', error);
+      logger.error('โหลดปลั๊กอินล้มเหลว:', error);
     }
   }
 
   /**
-   * 扫描插件目录
+   * สแกนไดเรกทอรีของปลั๊กอิน
    */
   private async scanPlugins(): Promise<string[]> {
     try {
@@ -85,48 +85,48 @@ export class PluginManager {
 
       return plugins;
     } catch (error) {
-      logger.error('扫描插件目录失败:', error);
+      logger.error('สแกนไดเรกทอรีปลั๊กอินล้มเหลว:', error);
       return [];
     }
   }
 
   /**
-   * 加载单个插件
+   * โหลดปลั๊กอินทีละตัว
    */
   private async loadPlugin(pluginName: string): Promise<void> {
     try {
-      logger.info(`加载插件: ${pluginName}`);
+      logger.info(`กำลังโหลดปลั๊กอิน: ${pluginName}`);
 
       const configPath = path.join(this.pluginsDir, pluginName, 'config.yaml');
       const config = await this.loadConfig(configPath);
 
       if (!config) {
-        logger.warn(`插件 ${pluginName} 配置无效`);
+        logger.warn(`การตั้งค่าของปลั๊กอิน ${pluginName} ไม่ถูกต้อง`);
         return;
       }
 
-      // 注入命令
+      // แทรกคำสั่ง (Inject Commands)
       if (config.commands && config.commands.length > 0) {
         await this.injectCommands(pluginName, config.commands);
       }
 
-      // 注入 Skills
+      // แทรกทักษะ (Inject Skills)
       if (config.skills && config.skills.length > 0) {
         await this.injectSkills(pluginName, config.skills);
       }
 
-      logger.success(`插件 ${pluginName} 加载成功`);
+      logger.success(`โหลดปลั๊กอิน ${pluginName} สำเร็จเรียบร้อยแล้ว`);
 
       if (config.installation?.message) {
         console.log(config.installation.message);
       }
     } catch (error) {
-      logger.error(`加载插件 ${pluginName} 失败:`, error);
+      logger.error(`โหลดปลั๊กอิน ${pluginName} ล้มเหลว:`, error);
     }
   }
 
   /**
-   * 读取插件配置
+   * อ่านไฟล์ตั้งค่าของปลั๊กอิน
    */
   private async loadConfig(configPath: string): Promise<PluginConfig | null> {
     try {
@@ -139,13 +139,13 @@ export class PluginManager {
 
       return config;
     } catch (error) {
-      logger.error(`读取配置文件失败: ${configPath}`, error);
+      logger.error(`อ่านไฟล์ตั้งค่าล้มเหลว: ${configPath}`, error);
       return null;
     }
   }
 
   /**
-   * 注入插件命令
+   * แทรกคำสั่งของปลั๊กอิน (Inject Plugin Commands)
    */
   private async injectCommands(
     pluginName: string,
@@ -160,15 +160,15 @@ export class PluginManager {
 
         await fs.ensureDir(this.commandsDir);
         await fs.copy(sourcePath, destPath);
-        logger.debug(`注入命令: /${cmd.id}`);
+        logger.debug(`แทรกคำสั่งสำเร็จ: /${cmd.id}`);
       } catch (error) {
-        logger.error(`注入命令 ${cmd.id} 失败:`, error);
+        logger.error(`แทรกคำสั่ง ${cmd.id} ล้มเหลว:`, error);
       }
     }
   }
 
   /**
-   * 注入插件 Skills
+   * แทรกทักษะของปลั๊กอิน (Inject Plugin Skills)
    */
   private async injectSkills(
     pluginName: string,
@@ -183,15 +183,15 @@ export class PluginManager {
 
         await fs.ensureDir(path.dirname(destPath));
         await fs.copy(sourcePath, destPath);
-        logger.debug(`注入 Skill: ${skill.id}`);
+        logger.debug(`แทรก Skill สำเร็จ: ${skill.id}`);
       } catch (error) {
-        logger.error(`注入 Skill ${skill.id} 失败:`, error);
+        logger.error(`แทรก Skill ${skill.id} ล้มเหลว:`, error);
       }
     }
   }
 
   /**
-   * 列出所有已安装的插件
+   * แสดงรายการปลั๊กอินทั้งหมดที่ติดตั้งไว้
    */
   async listPlugins(): Promise<PluginConfig[]> {
     const plugins = await this.scanPlugins();
@@ -209,59 +209,58 @@ export class PluginManager {
   }
 
   /**
-   * 安装插件
+   * ติดตั้งปลั๊กอิน
    */
   async installPlugin(pluginName: string, source?: string): Promise<void> {
     try {
-      logger.info(`安装插件: ${pluginName}`);
+      logger.info(`กำลังติดตั้งปลั๊กอิน: ${pluginName}`);
 
       if (source) {
         const destPath = path.join(this.pluginsDir, pluginName);
         await fs.copy(source, destPath);
       } else {
-        logger.warn('远程安装功能尚未实现');
+        logger.warn('ระบบยังไม่รองรับฟังก์ชันการติดตั้งจากระยะไกล (Remote Installation)');
         return;
       }
 
       await this.loadPlugin(pluginName);
-      logger.success(`插件 ${pluginName} 安装成功`);
+      logger.success(`ติดตั้งปลั๊กอิน ${pluginName} สำเร็จเรียบร้อยแล้ว`);
     } catch (error) {
-      logger.error(`安装插件 ${pluginName} 失败:`, error);
+      logger.error(`ติดตั้งปลั๊กอิน ${pluginName} ล้มเหลว:`, error);
       throw error;
     }
   }
 
   /**
-   * 移除插件
+   * ลบปลั๊กอินออก
    */
   async removePlugin(pluginName: string): Promise<void> {
     try {
-      logger.info(`移除插件: ${pluginName}`);
+      logger.info(`กำลังลบปลั๊กอิน: ${pluginName}`);
 
-      // 删除插件目录
+      // ลบไดเรกทอรีของปลั๊กอิน
       const pluginPath = path.join(this.pluginsDir, pluginName);
       await fs.remove(pluginPath);
 
-      // 删除注入的命令
+      // ลบคำสั่งที่เคยแทรกไว้
       if (await fs.pathExists(this.commandsDir)) {
         const commandFiles = await fs.readdir(this.commandsDir);
         for (const file of commandFiles) {
-          // 这里简化处理，实际应该读取插件配置来确定要删除的文件
-          // 暂时跳过，因为我们需要知道哪些命令属于这个插件
+          // ส่วนนี้เป็นการประมวลผลแบบย่อ ในความเป็นจริงควรอ่านไฟล์ตั้งค่าของปลั๊กอินเพื่อระบุไฟล์ที่จะลบให้ชัดเจน
+          // ชั่วคราวนี้ขอข้ามไปก่อน เนื่องจากจำเป็นต้องทราบว่าคำสั่งใดบ้างที่เป็นของปลั๊กอินตัวนี้
         }
       }
 
-      // 删除注入的 Skills
+      // ลบทักษะ (Skills) ที่เคยแทรกไว้
       const pluginSkillsDir = path.join(this.skillsDir, pluginName);
       if (await fs.pathExists(pluginSkillsDir)) {
         await fs.remove(pluginSkillsDir);
       }
 
-      logger.success(`插件 ${pluginName} 移除成功`);
+      logger.success(`ลบปลั๊กอิน ${pluginName} สำเร็จเรียบร้อยแล้ว`);
     } catch (error) {
-      logger.error(`移除插件 ${pluginName} 失败:`, error);
+      logger.error(`ลบปลั๊กอิน ${pluginName} ล้มเหลว:`, error);
       throw error;
     }
   }
 }
-

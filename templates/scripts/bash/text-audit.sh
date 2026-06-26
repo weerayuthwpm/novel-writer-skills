@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# 文本人味自查（离线）：连接词/空话密度、句长统计、抽象词密度
+# ระบบตรวจสอบความเป็นธรรมชาติของงานเขียน (ออฟไลน์): ความหนาแน่นของคำเชื่อม/คำพูดกลวง, สถิติความยาวประโยค, ความหนาแน่นของคำนามธรรม
 
 set -e
 
@@ -10,11 +10,11 @@ PROJECT_ROOT=$(get_project_root)
 
 FILE_PATH="$1"
 if [ -z "$FILE_PATH" ] || [ ! -f "$FILE_PATH" ]; then
-  echo "用法: scripts/bash/text-audit.sh <file>"
+  echo "วิธีใช้: scripts/bash/text-audit.sh <ชื่อไฟล์>"
   exit 1
 fi
 
-# 选择配置：优先项目 spec/knowledge，其次 .specify/templates/knowledge
+# เลือกการตั้งค่า: จัดลำดับความสำคัญของโครงการ spec/knowledge ก่อน หากไม่มีให้ใช้ .specify/templates/knowledge
 CFG_PROJECT="$PROJECT_ROOT/spec/knowledge/audit-config.json"
 CFG_TEMPLATE="$PROJECT_ROOT/.specify/templates/knowledge/audit-config.json"
 if [ -f "$CFG_PROJECT" ]; then
@@ -33,13 +33,14 @@ cfg_path = sys.argv[2] if len(sys.argv) > 2 else ''
 
 text = open(path, 'r', encoding='utf-8', errors='ignore').read()
 
-default_cfg = {
-  "connector_phrases": ["首先","其次","再次","然后","然而","总而言之","综上所述","在某种程度","众所周知","在当下","随着"],
-  "empty_phrases": ["广泛关注","引发热议","影响深远","具有重要意义","有效提升","具有一定的指导意义","值得我们思考"],
-  "cliche_pairs": [],
-  "sentence_length": {"max_run_long":4, "max_run_short":5, "short_threshold":12, "long_threshold":35},
-  "abstract_nouns": ["价值","意义","认知","体系","模式","路径","方法论","趋势"],
-  "min_concrete_details": 3
+# ค่าคอนฟิกเริ่มต้นสำห รับการตรวจจับกลุ่มคำ (คำแปลภาษาไทยถูกจัดเตรียมไว้สำหรับใช้เทียบเคียงในโค้ด) default_cfg = {
+"connector_phrases": ["First","Second","Again","Then","However","In conclusion","To some extent","As is known","At present","As"], # คำเชื่อม: ก่อนอื่น, ถัดมา, อีกครั้ง, จากนั้น, อย่างไรก็ตาม, สรุปก็คือ, กล่าวโดยสรุป, ในระดับหนึ่ง, เป็นที่รู้กันดี, ในปัจจุบัน, ตามที่/ด้วยการที่
+
+"empty_phrases": ["widely concerned", "aroused heated discussion", "far-reaching impact", "of great significance", "effectively improved", "has certain guiding significance", "worthy of our consideration"], # คำพูดกลวง/คำสำเร็จรูป: ได้รับความสนใจอย่างกว้างขวาง, เป็นที่ถกเถียงอย่างร้อนแรง, มีผลกระทบอันลึกซึ้ง, มีความหมายอันสำคัญยิ่ง, ยกระดับได้อย่างมีประสิทธิภาพ, มีคุณค่าในการชี้นำในระดับหนึ่ง, ควรค่าแก่การขบคิด 
+"cliche_pairs": [], 
+"sentence_length": {"max_run_long":4, "max_run_short":5, "short_threshold":12, "long_threshold":35}, # ความยาวประโยค: เกณฑ์ประโยคสั้นอยู่ที่ 12, ประโยคยาวอยู่ที่ 35 อักขระ 
+"abstract_nouns": ["value","meaning","cognition","system","model","path","methodology","trend"], # คำนามธรรม: คุณค่า, ความหมาย, การรับรู้, ระบบ/กลไก, รูปแบบ/โมเดล, เส้นทาง/แนวทาง, ระเบียบวิธี, แนวโน้ม 
+"min_concrete_details": 3
 }
 
 cfg = default_cfg
@@ -102,43 +103,42 @@ def ratio(count):
   return (count / max(1,total_chars)) * 1000
 
 print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-print("📊 离线文本人味自查报告")
-print(f"文件: {os.path.basename(path)}  字符数: {total_chars}")
+print("📊 รายงานการตรวจสอบความเป็นธรรมชาติของงานเขียน (ออฟไลน์)")
+print(f"ไฟล์: {os.path.basename(path)}  จำนวนอักขระ: {total_chars}")
 print("")
-print("连接词密度（每千字出现次数）")
+print("ความหนาแน่นของคำเชื่อม (จำนวนครั้งที่พบต่อ 1,000 อักขระ)")
 total_conn = sum(connectors.values())
-print(f"  总计: {total_conn}  | 比率: {ratio(total_conn):.2f}")
+print(f"  รวมทั้งสิ้น: {total_conn}  | สัดส่วน: {ratio(total_conn):.2f}")
 for k,v in sorted(connectors.items(), key=lambda x: -x[1])[:10]:
   if v>0: print(f"  - {k}: {v}")
 
 print("")
-print("空话/套话计数")
+print("จำนวนคำพูดกลวง / สํานวนสำเร็จรูปที่พบ")
 total_emp = sum(empties.values())
-print(f"  总计: {total_emp}  | 比率: {ratio(total_emp):.2f}")
+print(f"  รวมทั้งสิ้น: {total_emp}  | สัดส่วน: {ratio(total_emp):.2f}")
 for k,v in sorted(empties.items(), key=lambda x: -x[1])[:10]:
   if v>0: print(f"  - {k}: {v}")
 
 print("")
-print("句长统计")
-print(f"  句子数: {len(lens)}  | 平均: {avg:.1f}  | 标准差: {std:.1f}")
-print(f"  连续短句最大: {mx_run_short} (阈值 {cfg['sentence_length']['max_run_short']})")
-print(f"  连续长句最大: {mx_run_long} (阈值 {cfg['sentence_length']['max_run_long']})")
+print("สถิติความยาวประโยค")
+print(f"  จำนวนประโยค: {len(lens)}  | ค่าเฉลี่ย: {avg:.1f}  | ส่วนเบี่ยงเบนมาตรฐาน: {std:.1f}")
+print(f"  จำนวนประโยคสั้นที่ต่อเนื่องกันสูงสุด: {mx_run_short} (เกณฑ์ควบคุม {cfg['sentence_length']['max_run_short']})")
+print(f"  จำนวนประโยคยาวที่ต่อเนื่องกันสูงสุด: {mx_run_long} (เกณฑ์ควบคุม {cfg['sentence_length']['max_run_long']})")
 
 print("")
-print("抽象过载（示例段，≥2 抽象词）")
+print("สภาวะนามธรรมล้น (ตัวอย่างประโยคที่พบคำนามธรรม ≥2 คำ)")
 if abstract_top:
   for idx, s in abstract_top:
     snippet = s[:80] + ("…" if len(s)>80 else "")
-    print(f"  - 第{idx+1}句: {snippet}")
+    print(f"  - ประโยคที่ {idx+1}: {snippet}")
 else:
-  print("  无显著抽象过载片段")
+  print("  ไม่พบประโยคที่มีคำนามธรรมหนาแน่นเกินไป")
 
 print("")
-print("建议")
-print("  - 用具体动作/器物/气味替代空话与抽象名词")
-print("  - 打断长长串句子；合并过多的短句以形成起伏")
-print("  - 复查连接词是否可删除或自然过渡")
-print("  - 写前先列3个生活细节作为锚点")
+print("คำแนะนำสำหรับการปรับปรุง")
+print("  - ควรใช้การบรรยายการกระทำที่เป็นรูปธรรม วัตถุสิ่งของ หรือกลิ่นอายทดแทนคำพูดที่กลวงและคำนามธรรม")
+print("  - ตัดแบ่งประโยคที่ยาวต่อเนื่องเป็นพืด และควบรวมประโยคสั้นที่มากเกินไปเพื่อให้จังหวะจะโคนมีระดับสูงต่ำสลับกัน")
+print("  - ตรวจสอบคำเชื่อมซ้ำซ้อนเพื่อตัดออก หรือปรับเปลี่ยนให้เกิดการเปลี่ยนผ่านเนื้อหาที่เป็นธรรมชาติมากขึ้น")
+print("  - ก่อนเริ่มเขียนงาน ให้กำหนดรายละเอียดและองค์ประกอบการดำเนินชีวิตจริงล่วงหน้า 3 จุดเพื่อใช้เป็นหลักยึดเนื้อเรื่อง")
 print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 PY
-

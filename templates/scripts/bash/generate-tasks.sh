@@ -1,49 +1,49 @@
 #!/usr/bin/env bash
-# 生成写作任务
+# สคริปต์สร้างรายการงานเขียน
 
 set -e
 
-# 加载通用函数
+# โหลดฟังก์ชันสากล (Common Functions)
 SCRIPT_DIR=$(dirname "$0")
 source "$SCRIPT_DIR/common.sh"
 
-# 获取当前故事目录
+# รับไดเรกทอรีของโปรเจกต์เนื้อเรื่องปัจจุบัน
 STORY_DIR=$(get_current_story)
 
 if [ -z "$STORY_DIR" ]; then
-    echo "错误: 未找到故事项目" >&2
+    echo "ข้อผิดพลาด: ไม่พบโปรเจกต์เนื้อเรื่อง" >&2
     exit 1
 fi
 
-# 检查前置条件
+# ตรวจสอบเงื่อนไขก่อนหน้า (Prerequisites Check)
 if [ ! -f "$STORY_DIR/specification.md" ]; then
-    echo "错误: 未找到故事规格，请先使用 /specify 命令" >&2
+    echo "ข้อผิดพลาด: ไม่พบข้อกำหนดเฉพาะของเรื่อง (Specification) กรุณาใช้คำสั่ง /specify ก่อน" >&2
     exit 1
 fi
 
 if [ ! -f "$STORY_DIR/outline.md" ]; then
-    echo "错误: 未找到章节规划，请先使用 /outline 命令" >&2
+    echo "ข้อผิดพลาด: ไม่พบการวางแผนบทเรียน/โครงเรื่อง (Outline) กรุณาใช้คำสั่ง /outline ก่อน" >&2
     exit 1
 fi
 
-# 获取当前日期
+# รับวันที่และเวลาปัจจุบัน
 CURRENT_DATE=$(date '+%Y-%m-%d')
 CURRENT_DATETIME=$(date '+%Y-%m-%d %H:%M:%S')
 
-# 创建任务文件，预先填充基础信息
+# สร้างไฟล์รายการงาน (Tasks File) พร้อมใส่ข้อมูลพื้นฐานเริ่มต้น
 TASKS_FILE="$STORY_DIR/tasks.md"
 cat > "$TASKS_FILE" << EOF
-# 写作任务清单
+# รายการงานเขียน (Writing Task Checklist)
 
-## 任务概览
-- **创建日期**：${CURRENT_DATE}
-- **最后更新**：${CURRENT_DATE}
-- **任务状态**：待生成
+## ภาพรวมงาน (Overview)
+- **วันที่สร้าง**：${CURRENT_DATE}
+- **อัปเดตล่าสุด**：${CURRENT_DATE}
+- **สถานะงาน**：รอดำเนินการสร้าง (Pending)
 
 ---
 EOF
 
-# 创建进度追踪文件
+# สร้างไฟล์ติดตามความคืบหน้า (Progress Tracking File)
 PROGRESS_FILE="$STORY_DIR/progress.json"
 if [ ! -f "$PROGRESS_FILE" ]; then
     cat > "$PROGRESS_FILE" << EOF
@@ -58,7 +58,7 @@ if [ ! -f "$PROGRESS_FILE" ]; then
 EOF
 fi
 
-# 输出结果
+# แสดงผลลัพธ์การทำงานออกทางหน้าจอ
 echo "TASKS_FILE: $TASKS_FILE"
 echo "PROGRESS_FILE: $PROGRESS_FILE"
 echo "CURRENT_DATE: $CURRENT_DATE"

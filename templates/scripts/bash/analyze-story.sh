@@ -1,40 +1,40 @@
 #!/bin/bash
 
-# 故事分析验证脚本
-# 用于 /analyze 命令
+# สคริปต์ตรวจสอบและวิเคราะห์เนื้อเรื่อง
+# สำหรับใช้กับคำสั่ง /analyze
 
 set -e
 
-# Source common functions
+# โหลดฟังก์ชันส่วนกลาง (Source common functions)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/common.sh"
 
-# Parse arguments
+# แยกแยะอาร์กิวเมนต์ (Parse arguments)
 STORY_NAME="$1"
-ANALYSIS_TYPE="${2:-full}"  # full, compliance, quality, progress
+ANALYSIS_TYPE="${2:-full}"  # full (เต็มรูปแบบ), compliance (ความสอดคล้อง), quality (คุณภาพ), progress (ความคืบหน้า)
 
-# Get project root
+# รับพาธรากของโปรเจกต์ (Get project root)
 PROJECT_ROOT=$(get_project_root)
 cd "$PROJECT_ROOT"
 
-# 确定故事路径
+# กำหนดพาธของเนื้อเรื่อง
 if [ -z "$STORY_NAME" ]; then
     STORY_NAME=$(get_active_story)
 fi
 
 STORY_DIR="stories/$STORY_NAME"
 
-# 检查必要文件
+# ตรวจสอบไฟล์เอกสารอ้างอิงที่จำเป็น
 check_story_files() {
     local missing_files=()
 
-    # 检查基准文档
-    [ ! -f ".specify/memory/constitution.md" ] && missing_files+=("宪法文件")
-    [ ! -f "$STORY_DIR/specification.md" ] && missing_files+=("规格文件")
-    [ ! -f "$STORY_DIR/creative-plan.md" ] && missing_files+=("计划文件")
+    # ตรวจสอบเอกสารเกณฑ์มาตรฐาน
+    [ ! -f ".specify/memory/constitution.md" ] && missing_files+=("เอกสารรัฐธรรมนูญ/กฎหลัก (constitution)")
+    [ ! -f "$STORY_DIR/specification.md" ] && missing_files+=("เอกสารข้อกำหนด (specification)")
+    [ ! -f "$STORY_DIR/creative-plan.md" ] && missing_files+=("เอกสารแผนงานสร้างสรรค์ (creative-plan)")
 
     if [ ${#missing_files[@]} -gt 0 ]; then
-        echo "⚠️ 缺少以下基准文档："
+        echo "⚠️ ขาดเอกสารเกณฑ์มาตรฐานดังต่อไปนี้:"
         for file in "${missing_files[@]}"; do
             echo "  - $file"
         done
@@ -44,42 +44,42 @@ check_story_files() {
     return 0
 }
 
-# 统计内容
+# สถิติเนื้อหา
 analyze_content() {
     local content_dir="$STORY_DIR/content"
     local total_words=0
     local chapter_count=0
 
     if [ -d "$content_dir" ]; then
-        echo "内容统计："
+        echo "สถิติเนื้อหา:"
         echo ""
         for file in "$content_dir"/*.md; do
             if [ -f "$file" ]; then
                 ((chapter_count++))
-                # 使用准确的中文字数统计
+                # นับจำนวนคำภาษาจีนอย่างแม่นยำ
                 local words=$(count_chinese_words "$file")
                 ((total_words += words))
                 local filename=$(basename "$file")
-                echo "  $filename: $words 字"
+                echo "  $filename: $words คำ"
             fi
         done
         echo ""
-        echo "  总字数：$total_words"
-        echo "  章节数：$chapter_count"
+        echo "  จำนวนคำทั้งหมด: $total_words"
+        echo "  จำนวนตอน/บท: $chapter_count"
         if [ $chapter_count -gt 0 ]; then
-            echo "  平均章节长度：$((total_words / chapter_count)) 字"
+            echo "  ความยาวเฉลี่ยต่อตอน: $((total_words / chapter_count)) คำ"
         fi
     else
-        echo "内容统计："
-        echo "  尚未开始写作"
+        echo "สถิติเนื้อหา:"
+        echo "  ยังไม่ได้เริ่มเขียน"
     fi
 }
 
-# 检查任务完成度
+# ตรวจสอบความคืบหน้าของงาน
 check_task_completion() {
     local tasks_file="$STORY_DIR/tasks.md"
     if [ ! -f "$tasks_file" ]; then
-        echo "任务文件不存在"
+        echo "ไม่พบไฟล์รายการงาน (tasks.md)"
         return
     fi
 
@@ -88,58 +88,58 @@ check_task_completion() {
     local in_progress=$(grep -c "^- \[~\]" "$tasks_file" 2>/dev/null || echo 0)
     local pending=$((total_tasks - completed_tasks - in_progress))
 
-    echo "任务进度："
-    echo "  总任务：$total_tasks"
-    echo "  已完成：$completed_tasks"
-    echo "  进行中：$in_progress"
-    echo "  未开始：$pending"
+    echo "ความคืบหน้าของงาน:"
+    echo "  งานทั้งหมด: $total_tasks"
+    echo "  เสร็จสิ้นแล้ว: $completed_tasks"
+    echo "  กำลังดำเนินการ: $in_progress"
+    echo "  ยังไม่ได้รับทำ: $pending"
 
     if [ $total_tasks -gt 0 ]; then
         local completion_rate=$((completed_tasks * 100 / total_tasks))
-        echo "  完成率：$completion_rate%"
+        echo "  อัตราความสำเร็จ: $completion_rate%"
     fi
 }
 
-# 检查规格符合度
+# ตรวจสอบความสอดคล้องกับข้อกำหนด
 check_specification_compliance() {
     local spec_file="$STORY_DIR/specification.md"
 
-    echo "规格符合度检查："
+    echo "การตรวจสอบความสอดคล้องกับข้อกำหนด:"
 
-    # 检查P0需求（简化版）
+    # ตรวจสอบความต้องการระดับ P0 (ฉบับย่อ)
     local p0_count=$(grep -c "^### 必须包含（P0）" "$spec_file" 2>/dev/null || echo 0)
     if [ $p0_count -gt 0 ]; then
-        echo "  P0需求：检测到，需人工验证"
+        echo "  ความต้องการ P0: ตรวจพบแล้ว จำเป็นต้องใช้คนตรวจสอบ (Manual Verify)"
     fi
 
-    # 检查是否还有[需要澄清]标记
+    # ตรวจสอบว่ายังคงมีเครื่องหมาย [ต้องการคำชี้แจง] หลงเหลืออยู่หรือไม่
     local unclear=$(grep -c "\[需要澄清\]" "$spec_file" 2>/dev/null || echo 0)
     if [ $unclear -gt 0 ]; then
-        echo "  ⚠️ 仍有 $unclear 处需要澄清"
+        echo "  ⚠️ ยังมีอีก $unclear จุดที่ต้องการคำชี้แจง"
     else
-        echo "  ✅ 所有决策已澄清"
+        echo "  ✅ การตัดสินใจทั้งหมดได้รับการชี้แจงเรียบร้อยแล้ว"
     fi
 }
 
-# 主分析流程
+# กระบวนการวิเคราะห์หลัก
 main() {
-    echo "故事分析报告"
+    echo "รายงานการวิเคราะห์เนื้อเรื่อง"
     echo "============"
-    echo "故事：$STORY_NAME"
-    echo "分析时间：$(date '+%Y-%m-%d %H:%M:%S')"
+    echo "เนื้อเรื่อง: $STORY_NAME"
+    echo "เวลาที่วิเคราะห์: $(date '+%Y-%m-%d %H:%M:%S')"
     echo ""
 
-    # 检查基准文档
+    # ตรวจสอบเอกสารเกณฑ์มาตรฐาน
     if ! check_story_files; then
         echo ""
-        echo "❌ 无法进行完整分析，请先完成基准文档"
+        echo "❌ ไม่สามารถดำเนินการวิเคราะห์แบบเต็มรูปแบบได้ กรุณากรอกเอกสารเกณฑ์มาตรฐานให้ครบถ้วนก่อน"
         exit 1
     fi
 
-    echo "✅ 基准文档完整"
+    echo "✅ เอกสารเกณฑ์มาตรฐานครบถ้วน"
     echo ""
 
-    # 根据分析类型执行
+    # ดำเนินการตามประเภทการวิเคราะห์ที่กำหนด
     case "$ANALYSIS_TYPE" in
         full)
             analyze_content
@@ -158,13 +158,13 @@ main() {
             check_specification_compliance
             ;;
         *)
-            echo "未知的分析类型：$ANALYSIS_TYPE"
+            echo "ไม่รู้จักประเภทการวิเคราะห์: $ANALYSIS_TYPE"
             exit 1
             ;;
     esac
 
     echo ""
-    echo "分析完成。详细报告已保存到：$STORY_DIR/analysis-report.md"
+    echo "วิเคราะห์เสร็จสิ้น รายงานโดยละเอียดได้รับการบันทึกไว้ที่: $STORY_DIR/analysis-report.md"
 }
 
 main

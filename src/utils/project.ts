@@ -10,7 +10,7 @@ export interface ProjectInfo {
 }
 
 /**
- * 检测当前目录是否是 novel-writer-skills 项目
+ * ตรวจสอบว่าไดเรกทอรีปัจจุบันเป็นโฟลเดอร์หลัก (Root) ของโปรเจกต์ novel-writer-skills หรือไม่
  */
 export async function isProjectRoot(dir: string): Promise<boolean> {
   const configPath = path.join(dir, '.specify', 'config.json');
@@ -18,7 +18,7 @@ export async function isProjectRoot(dir: string): Promise<boolean> {
 }
 
 /**
- * 向上查找项目根目录
+ * ค้นหาโฟลเดอร์หลัก (Root) ของโปรเจกต์ โดยไล่หาขึ้นไปตามลำดับชั้นของไดเรกทอรี
  */
 export async function findProjectRoot(startDir: string = process.cwd()): Promise<string | null> {
   let currentDir = startDir;
@@ -30,7 +30,7 @@ export async function findProjectRoot(startDir: string = process.cwd()): Promise
     
     const parentDir = path.dirname(currentDir);
     
-    // 已到达文件系统根目录
+    // ค้นหาจนถึงบนสุดของระบบไฟล์ (File System Root) แล้ว
     if (parentDir === currentDir) {
       return null;
     }
@@ -40,7 +40,7 @@ export async function findProjectRoot(startDir: string = process.cwd()): Promise
 }
 
 /**
- * 确保在项目根目录，否则抛出错误
+ * ตรวจสอบให้แน่ใจว่าทำงานอยู่ในโฟลเดอร์หลักของโปรเจกต์ หากไม่ใช่จะทำการโยนข้อผิดพลาด (Throw Error) ออกไป
  */
 export async function ensureProjectRoot(): Promise<string> {
   const projectRoot = await findProjectRoot();
@@ -53,7 +53,7 @@ export async function ensureProjectRoot(): Promise<string> {
 }
 
 /**
- * 获取项目信息
+ * ดึงข้อมูลรายละเอียดของโปรเจกต์
  */
 export async function getProjectInfo(projectPath: string): Promise<ProjectInfo | null> {
   try {
@@ -76,4 +76,3 @@ export async function getProjectInfo(projectPath: string): Promise<ProjectInfo |
     return null;
   }
 }
-

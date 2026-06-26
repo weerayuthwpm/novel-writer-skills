@@ -1,15 +1,15 @@
 #!/bin/bash
 
-# 故事规格定义脚本
-# 用于 /specify 命令
+# สคริปต์กำหนดข้อกำหนดเฉพาะของเนื้อเรื่อง
+# สำหรับใช้ร่วมกับคำสั่ง /specify
 
 set -e
 
-# Source common functions
+# โหลดฟังก์ชันสากล (Common Functions)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/common.sh"
 
-# Parse arguments
+# กำหนดค่าเริ่มต้นสำหรับการรับอาร์กิวเมนต์
 JSON_MODE=false
 
 while [[ $# -gt 0 ]]; do
@@ -25,13 +25,13 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# Get project root
+# รับไดเรกทอรีรากของโปรเจกต์ (Project Root)
 PROJECT_ROOT=$(get_project_root)
 cd "$PROJECT_ROOT"
 
-# 确定故事名称和路径
+# ตรวจสอบเพื่อระบุชื่อเรื่องและพาธของเนื้อเรื่อง
 if [ -z "$STORY_NAME" ]; then
-    # 查找最新的故事
+    # ค้นหาโปรเจกต์เนื้อเรื่องล่าสุด
     STORIES_DIR="stories"
     if [ -d "$STORIES_DIR" ] && [ "$(ls -A $STORIES_DIR 2>/dev/null)" ]; then
         STORY_DIR=$(find "$STORIES_DIR" -maxdepth 1 -type d ! -name "stories" | sort -r | head -n 1)
@@ -40,20 +40,20 @@ if [ -z "$STORY_NAME" ]; then
         fi
     fi
 
-    # 如果还是没有，生成默认名称
+    # หากยังไม่มีชื่อเรื่อง ให้สร้างชื่อเริ่มต้นตามวันที่ปัจจุบัน
     if [ -z "$STORY_NAME" ]; then
         STORY_NAME="story-$(date +%Y%m%d)"
     fi
 fi
 
-# 设置路径
+# ตั้งค่าพาธไดเรกทอรีและไฟล์ข้อกำหนดเฉพาะ (Specification Path)
 STORY_DIR="stories/$STORY_NAME"
 SPEC_FILE="$STORY_DIR/specification.md"
 
-# 创建目录
+# สร้างไดเรกทอรีสำหรับเก็บเนื้อเรื่อง
 mkdir -p "$STORY_DIR"
 
-# 检查文件状态
+# ตรวจสอบสถานะการมีอยู่ของไฟล์
 SPEC_EXISTS=false
 STATUS="new"
 
@@ -62,7 +62,7 @@ if [ -f "$SPEC_FILE" ]; then
     STATUS="exists"
 fi
 
-# 输出 JSON 格式
+# ส่งออกข้อมูลในรูปแบบ JSON หากเปิดโหมด --json
 if [ "$JSON_MODE" = true ]; then
     cat <<EOF
 {
@@ -74,20 +74,21 @@ if [ "$JSON_MODE" = true ]; then
 }
 EOF
 else
-    echo "故事规格初始化"
-    echo "================"
-    echo "故事名称：$STORY_NAME"
-    echo "规格路径：$SPEC_FILE"
+    # การแสดงรายงานแบบข้อความปกติออกทางหน้าจอ
+    echo "เริ่มต้นข้อกำหนดเฉพาะของเนื้อเรื่อง (Story Specification)"
+    echo "================================================="
+    echo "ชื่อเรื่อง：$STORY_NAME"
+    echo "พาธข้อกำหนดเฉพาะ：$SPEC_FILE"
 
     if [ "$SPEC_EXISTS" = true ]; then
-        echo "状态：规格文件已存在，准备更新"
+        echo "สถานะ：พบไฟล์ข้อกำหนดเฉพาะแล้ว เตรียมดำเนินการอัปเดต"
     else
-        echo "状态：准备创建新规格"
+        echo "สถานะ：เตรียมดำเนินการสร้างข้อกำหนดเฉพาะฉบับใหม่"
     fi
 
-    # 检查宪法
+    # ตรวจสอบการมีอยู่ของรัฐธรรมนูญนิยาย (Constitution)
     if [ -f ".specify/memory/constitution.md" ]; then
         echo ""
-        echo "✅ 检测到创作宪法，规格将遵循宪法原则"
+        echo "✅ ตรวจพบรัฐธรรมนูญแห่งการสร้างสรรค์ ข้อกำหนดเฉพาะนี้จะปฏิบัติตามหลักการของรัฐธรรมนูญ"
     fi
 fi

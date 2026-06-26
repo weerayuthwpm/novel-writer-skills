@@ -16,12 +16,12 @@ const __dirname = path.dirname(__filename);
 
 const program = new Command();
 
-// 显示欢迎横幅
+// แสดงแบนเนอร์ต้อนรับ
 function displayBanner(): void {
   const banner = `
 ╔═══════════════════════════════════════╗
 ║  📚  Novel Writer Skills  📝          ║
-║  Claude Code 专用小说创作工具        ║
+║  เครื่องมือสร้างสรรค์นิยายสำหรับ Claude Code  ║
 ╚═══════════════════════════════════════╝
 `;
   console.log(chalk.cyan(banner));
@@ -32,41 +32,41 @@ displayBanner();
 
 program
   .name('novelwrite')
-  .description(chalk.cyan('Novel Writer Skills - Claude Code 专用小说创作工具'))
-  .version(getVersion(), '-v, --version', '显示版本号')
-  .helpOption('-h, --help', '显示帮助信息');
+  .description(chalk.cyan('Novel Writer Skills - เครื่องมือสร้างสรรค์นิยายสำหรับ Claude Code โดยเฉพาะ'))[cite: 4]
+  .version(getVersion(), '-v, --version', 'แสดงหมายเลขเวอร์ชัน')[cite: 4]
+  .helpOption('-h, --help', 'แสดงข้อมูลช่วยเหลือ');[cite: 4]
 
-// init 命令 - 初始化小说项目
+// คำสั่ง init - เริ่มต้นสร้างโปรเจกต์นิยาย
 program
   .command('init')
-  .argument('[name]', '小说项目名称')
-  .option('--here', '在当前目录初始化')
-  .option('--plugins <names>', '预装插件，逗号分隔')
-  .option('--no-git', '跳过 Git 初始化')
-  .description('初始化一个新的小说项目')
+  .argument('[name]', 'ชื่อโปรเจกต์นิยาย')[cite: 4]
+  .option('--here', 'เริ่มต้นโปรเจกต์ในไดเรกทอรีปัจจุบัน')[cite: 4]
+  .option('--plugins <names>', 'ปลั๊กอินที่จะติดตั้งไว้ล่วงหน้า (คั่นด้วยเครื่องหมายจุลภาค ,)')[cite: 4]
+  .option('--no-git', 'ข้ามการตั้งค่าเริ่มต้น Git')[cite: 4]
+  .description('เริ่มต้นสร้างโปรเจกต์นิยายใหม่')[cite: 4]
   .action(async (name, options) => {
-    const spinner = ora('正在初始化小说项目...').start();
+    const spinner = ora('กำลังเริ่มต้นสร้างโปรเจกต์นิยาย...').start();[cite: 4]
 
     try {
-      // 确定项目路径
+      // กำหนดเส้นทางโปรเจกต์ (Project Path)
       let projectPath: string;
       if (options.here) {
         projectPath = process.cwd();
         name = path.basename(projectPath);
       } else {
         if (!name) {
-          spinner.fail('请提供项目名称或使用 --here 参数');
+          spinner.fail('กรุณาระบุชื่อโปรเจกต์ หรือใช้พารามิเตอร์ --here');[cite: 4]
           process.exit(1);
         }
         projectPath = path.join(process.cwd(), name);
         if (await fs.pathExists(projectPath)) {
-          spinner.fail(`项目目录 "${name}" 已存在`);
+          spinner.fail(`ไดเรกทอรีโปรเจกต์ "${name}" มีอยู่แล้วในระบบ`);[cite: 4]
           process.exit(1);
         }
         await fs.ensureDir(projectPath);
       }
 
-      // 创建基础项目结构
+      // สร้างโครงสร้างพื้นฐานของโปรเจกต์
       const baseDirs = [
         '.specify',
         '.specify/memory',
@@ -84,7 +84,7 @@ program
         await fs.ensureDir(path.join(projectPath, dir));
       }
 
-      // 创建基础配置文件
+      // สร้างไฟล์กำหนดค่าพื้นฐาน (Configuration File)
       const config = {
         name,
         type: 'novel',
@@ -95,64 +95,64 @@ program
 
       await fs.writeJson(path.join(projectPath, '.specify', 'config.json'), config, { spaces: 2 });
 
-      // 从 novel-writer-skills 包复制模板文件
+      // คัดลอกไฟล์เทมเพลตจากแพ็กเกจ novel-writer-skills
       const packageRoot = path.resolve(__dirname, '..');
 
-      // 复制命令文件
+      // คัดลอกไฟล์คำสั่ง (Commands)
       const commandsSource = path.join(packageRoot, 'templates', 'commands');
       const commandsDest = path.join(projectPath, '.claude', 'commands');
       if (await fs.pathExists(commandsSource)) {
         await fs.copy(commandsSource, commandsDest);
-        spinner.text = '已安装 Slash Commands...';
+        spinner.text = 'ติดตั้ง Slash Commands เรียบร้อยแล้ว...';[cite: 4]
       }
 
-      // 复制 Skills 文件
+      // คัดลอกไฟล์ทักษะ (Skills)
       const skillsSource = path.join(packageRoot, 'templates', 'skills');
       const skillsDest = path.join(projectPath, '.claude', 'skills');
       if (await fs.pathExists(skillsSource)) {
         await fs.copy(skillsSource, skillsDest);
-        spinner.text = '已安装 Agent Skills...';
+        spinner.text = 'ติดตั้ง Agent Skills เรียบร้อยแล้ว...';[cite: 4]
       }
 
-      // 复制模板文件到 .specify/templates
+      // คัดลอกไฟล์เทมเพลตไปยัง .specify/templates
       const fullTemplatesDir = path.join(packageRoot, 'templates');
       if (await fs.pathExists(fullTemplatesDir)) {
         const userTemplatesDir = path.join(projectPath, '.specify', 'templates');
         await fs.copy(fullTemplatesDir, userTemplatesDir, { overwrite: false });
       }
 
-      // 复制 memory 文件
+      // คัดลอกไฟล์ความจำ (Memory)
       const memoryDir = path.join(packageRoot, 'templates', 'memory');
       if (await fs.pathExists(memoryDir)) {
         const userMemoryDir = path.join(projectPath, '.specify', 'memory');
         await fs.copy(memoryDir, userMemoryDir);
       }
 
-      // 复制追踪文件模板
+      // คัดลอกเทมเพลตไฟล์ติดตามผล (Tracking)
       const trackingTemplatesDir = path.join(packageRoot, 'templates', 'tracking');
       if (await fs.pathExists(trackingTemplatesDir)) {
         const userTrackingDir = path.join(projectPath, 'spec', 'tracking');
         await fs.copy(trackingTemplatesDir, userTrackingDir);
       }
 
-      // 复制知识库模板（项目特定）
+      // คัดลอกเทมเพลตคลังความรู้ (เจาะจงเฉพาะโปรเจกต์)
       const knowledgeTemplatesDir = path.join(packageRoot, 'templates', 'knowledge');
       if (await fs.pathExists(knowledgeTemplatesDir)) {
         const userKnowledgeDir = path.join(projectPath, 'spec', 'knowledge');
         await fs.copy(knowledgeTemplatesDir, userKnowledgeDir);
       }
 
-      // 复制通用知识库系统（v1.0新增）
+      // คัดลอกระบบคลังความรู้ส่วนกลาง (เพิ่มเข้ามาใน v1.0)
       const knowledgeBaseDir = path.join(packageRoot, 'templates', 'knowledge-base');
       if (await fs.pathExists(knowledgeBaseDir)) {
         const claudeKnowledgeBaseDir = path.join(projectPath, '.claude', 'knowledge-base');
         await fs.copy(knowledgeBaseDir, claudeKnowledgeBaseDir);
-        spinner.text = '已安装知识库系统...';
+        spinner.text = 'ติดตั้งระบบคลังความรู้เรียบร้อยแล้ว...';[cite: 4]
       }
 
-      // 如果指定了 --plugins，安装插件
+      // ติดตั้งปลั๊กอินหากมีการระบุพารามิเตอร์ --plugins
       if (options.plugins) {
-        spinner.text = '安装插件...';
+        spinner.text = 'กำลังติดตั้งปลั๊กอิน...';[cite: 4]
         const pluginNames = options.plugins.split(',').map((p: string) => p.trim());
         const pluginManager = new PluginManager(projectPath);
 
@@ -161,83 +161,83 @@ program
           if (await fs.pathExists(builtinPluginPath)) {
             await pluginManager.installPlugin(pluginName, builtinPluginPath);
           } else {
-            console.log(chalk.yellow(`\n警告: 插件 "${pluginName}" 未找到`));
+            console.log(chalk.yellow(`\nคำเตือน: ไม่พบปลั๊กอิน "${pluginName}"`));[cite: 4]
           }
         }
       }
 
-      // Git 初始化
+      // ตั้งค่าเริ่มต้น Git (Git Initialization)
       if (options.git !== false) {
         try {
           execSync('git init', { cwd: projectPath, stdio: 'ignore' });
 
-          const gitignore = `# 临时文件
+          const gitignore = `# ไฟล์ชั่วคราว
 *.tmp
 *.swp
 .DS_Store
 
-# 编辑器配置
+# การตั้งค่าสำหรับ Editor
 .vscode/
 .idea/
 
-# AI 缓存
+# แคชของ AI
 .ai-cache/
 
-# 节点模块
+# โฟลเดอร์โมดูล Node
 node_modules/
 `;
           await fs.writeFile(path.join(projectPath, '.gitignore'), gitignore);
           execSync('git add .', { cwd: projectPath, stdio: 'ignore' });
-          execSync('git commit -m "初始化小说项目"', { cwd: projectPath, stdio: 'ignore' });
+          execSync('git commit -m "เริ่มต้นสร้างโปรเจกต์นิยาย"', { cwd: projectPath, stdio: 'ignore' });[cite: 4]
         } catch {
-          console.log(chalk.yellow('\n提示: Git 初始化失败，但项目已创建成功'));
+          console.log(chalk.yellow('\nคำแนะนำ: การตั้งค่าเริ่มต้น Git ล้มเหลว แต่โปรเจกต์ถูกสร้างสำเร็จเรียบร้อยแล้ว'));[cite: 4]
         }
       }
 
-      spinner.succeed(chalk.green(`小说项目 "${name}" 创建成功！`));
+      spinner.succeed(chalk.green(`สร้างโปรเจกต์นิยาย "${name}" สำเร็จเรียบร้อยแล้ว!`));[cite: 4]
 
-      // 显示后续步骤
-      console.log('\n' + chalk.cyan('接下来:'));
+      // แสดงขั้นตอนการดำเนินการต่อไป
+      console.log('\n' + chalk.cyan('ขั้นตอนต่อไป:'));[cite: 4]
       console.log(chalk.gray('─────────────────────────────'));
 
       if (!options.here) {
-        console.log(`  1. ${chalk.white(`cd ${name}`)} - 进入项目目录`);
+        console.log(`  1. ${chalk.white(`cd ${name}`)} - เข้าสู่ไดเรกทอรีโปรเจกต์`);[cite: 4]
       }
 
-      console.log(`  2. ${chalk.white('在 Claude Code 中打开项目')}`);
-      console.log(`  3. 使用以下斜杠命令开始创作:`);
+      console.log(`  2. ${chalk.white('เปิดโปรเจกต์นี้ใน Claude Code')}`);[cite: 4]
+      console.log(`  3. เริ่มต้นสร้างสรรค์โดยใช้ Slash Commands เหล่านี้:`);[cite: 4]
 
-      console.log('\n' + chalk.yellow('     📝 七步方法论:'));
-      console.log(`     ${chalk.cyan('/constitution')} - 创建创作宪法，定义核心原则`);
-      console.log(`     ${chalk.cyan('/specify')}      - 定义故事规格，明确要创造什么`);
-      console.log(`     ${chalk.cyan('/clarify')}      - 澄清关键决策点，明确模糊之处`);
-      console.log(`     ${chalk.cyan('/plan')}         - 制定技术方案，决定如何创作`);
-      console.log(`     ${chalk.cyan('/tasks')}        - 分解执行任务，生成可执行清单`);
-      console.log(`     ${chalk.cyan('/write')}        - AI 辅助写作章节内容`);
-      console.log(`     ${chalk.cyan('/analyze')}      - 综合验证分析，确保质量一致`);
+      console.log('\n' + chalk.yellow('     📝 ระเบียบวิธีคิด 7 ขั้นตอน (Seven-step Methodology):'));[cite: 4]
+      console.log(`     ${chalk.cyan('/constitution')} - สร้างธรรมนูญการเขียน เพื่อกำหนดหลักการสำคัญ`);[cite: 4]
+      console.log(`     ${chalk.cyan('/specify')}      - กำหนดรายละเอียดของเรื่อง ระบุสิ่งที่จะสร้างให้ชัดเจน`);[cite: 4]
+      console.log(`     ${chalk.cyan('/clarify')}      - คลี่คลายจุดตัดสินใจสำคัญและจุดที่ยังคลุมเครือ`);[cite: 4]
+      console.log(`     ${chalk.cyan('/plan')}         - วางแผนทางเทคนิค กำหนดแนวทางการสร้างสรรค์`);[cite: 4]
+      console.log(`     ${chalk.cyan('/tasks')}        - แยกย่อยงานปฏิบัติการ สร้างรายการที่ลงมือทำได้จริง`);[cite: 4]
+      console.log(`     ${chalk.cyan('/write')}        - ใช้ AI ช่วยเขียนเนื้อหาในแต่ละบท`);[cite: 4]
+      console.log(`     ${chalk.cyan('/analyze')}      - วิเคราะห์และตรวจสอบภาพรวม เพื่อรักษาคุณภาพให้สอดคล้องกัน`);[cite: 4]
 
-      console.log('\n' + chalk.yellow('     📊 追踪管理命令:'));
-      console.log(`     ${chalk.cyan('/track-init')}  - 初始化追踪系统`);
-      console.log(`     ${chalk.cyan('/track')}       - 综合追踪更新`);
-      console.log(`     ${chalk.cyan('/plot-check')}  - 检查情节一致性`);
-      console.log(`     ${chalk.cyan('/timeline')}    - 管理故事时间线`);
+      console.log('\n' + chalk.yellow('     📊 คำสั่งจัดการและติดตามผล (Tracking Management):'));[cite: 4]
+      console.log(`     ${chalk.cyan('/track-init')}  - เริ่มต้นระบบติดตามผล`);[cite: 4]
+      console.log(`     ${chalk.cyan('/track')}       - อัปเดตการติดตามภาพรวม`);[cite: 4]
+      console.log(`     ${chalk.cyan('/plot-check')}  - ตรวจสอบความสอดคล้องของพล็อตเรื่อง`);[cite: 4]
+      console.log(`     ${chalk.cyan('/timeline')}    - จัดการเส้นเวลา (Timeline) ของเรื่อง`);[cite: 4]
 
-      console.log('\n' + chalk.gray('Agent Skills 会自动激活，无需手动调用'));
-      console.log(chalk.dim('提示: 斜杠命令在 Claude Code 内部使用，不是在终端中'));
+      console.log('\n' + chalk.gray('Agent Skills จะเปิดใช้งานโดยอัตโนมัติ ไม่จำเป็นต้องเรียกใช้ด้วยตนเอง'));[cite: 4]
+      console.log(chalk.dim('คำแนะนำ: Slash Commands มีไว้ใช้ภายใน Claude Code ไม่ใช่บนเทอร์มินัลปกติ'));[cite: 4]
 
     } catch (error) {
-      spinner.fail(chalk.red('项目初始化失败'));
+      spinner.fail(chalk.red('การเริ่มต้นสร้างโปรเจกต์ล้มเหลว'));[cite: 4]
       console.error(error);
       process.exit(1);
     }
   });
 
-// check 命令 - 检查环境
+// คำสั่ง check - ตรวจสอบสภาพแวดล้อมระบบ
 program
   .command('check')
-  .description('检查系统环境和 Claude Code')
+  .description('ตรวจสอบสภาพแวดล้อมระบบและ Claude Code')[cite: 4]
   .action(() => {
-    console.log(chalk.cyan('检查系统环境...\n'));
+    console.log(chalk.cyan('กำลังตรวจสอบสภาพแวดล้อมระบบ...\n'));[cite: 4]
 
     const checks = [
       { name: 'Node.js', command: 'node --version', installed: false },
@@ -248,123 +248,123 @@ program
       try {
         const version = execSync(check.command, { encoding: 'utf-8' }).trim();
         check.installed = true;
-        console.log(chalk.green('✓') + ` ${check.name} 已安装 (${version})`);
+        console.log(chalk.green('✓') + ` ${check.name} ติดตั้งแล้ว (${version})`);[cite: 4]
       } catch {
-        console.log(chalk.yellow('⚠') + ` ${check.name} 未安装`);
+        console.log(chalk.yellow('⚠') + ` ${check.name} ยังไม่ได้ติดตั้ง`);[cite: 4]
       }
     });
 
-    console.log('\n' + chalk.cyan('Claude Code 检测:'));
-    console.log(chalk.gray('请确保已安装 Claude Code 并可以正常使用'));
-    console.log(chalk.gray('下载地址: https://claude.ai/download'));
+    console.log('\n' + chalk.cyan('การตรวจหา Claude Code:'));[cite: 4]
+    console.log(chalk.gray('โปรดตรวจสอบให้แน่ใจว่าได้ติดตั้ง Claude Code และสามารถใช้งานได้ตามปกติ'));[cite: 4]
+    console.log(chalk.gray('ลิงก์ดาวน์โหลด: https://claude.ai/download'));[cite: 4]
 
-    console.log('\n' + chalk.green('环境检查完成！'));
+    console.log('\n' + chalk.green('ตรวจสอบสภาพแวดล้อมเสร็จสิ้น!'));[cite: 4]
   });
 
-// plugin 命令 - 插件管理
+// คำสั่ง plugin - การจัดการปลั๊กอิน
 program
   .command('plugin')
-  .description('插件管理 (使用 plugin:list, plugin:add, plugin:remove)')
+  .description('จัดการปลั๊กอิน (โปรดใช้คำสั่ง plugin:list, plugin:add, plugin:remove)')[cite: 4]
   .action(() => {
-    console.log(chalk.cyan('\n📦 插件管理命令:\n'));
-    console.log('  novelwrite plugin:list              - 列出已安装的插件');
-    console.log('  novelwrite plugin:add <name>        - 安装插件');
-    console.log('  novelwrite plugin:remove <name>     - 移除插件');
-    console.log('\n' + chalk.gray('可用插件:'));
-    console.log('  authentic-voice   - 真实人声写作插件');
+    console.log(chalk.cyan('\n📦 คำสั่งจัดการปลั๊กอิน:\n'));[cite: 4]
+    console.log('  novelwrite plugin:list              - แสดงรายการปลั๊กอินที่ติดตั้งแล้ว');[cite: 4]
+    console.log('  novelwrite plugin:add <name>        - ติดตั้งปลั๊กอิน');[cite: 4]
+    console.log('  novelwrite plugin:remove <name>     - ลบปลั๊กอินออก');[cite: 4]
+    console.log('\n' + chalk.gray('ปลั๊กอินที่พร้อมใช้งาน:'));[cite: 4]
+    console.log('  authentic-voice   - ปลั๊กอินสำหรับการเขียนด้วยน้ำเสียงมนุษย์ที่สมจริง (Authentic Voice)');[cite: 4]
   });
 
 program
   .command('plugin:list')
-  .description('列出已安装的插件')
+  .description('แสดงรายการปลั๊กอินที่ติดตั้งแล้ว')[cite: 4]
   .action(async () => {
     try {
       const projectPath = await ensureProjectRoot();
       const projectInfo = await getProjectInfo(projectPath);
 
       if (!projectInfo) {
-        console.log(chalk.red('❌ 无法读取项目信息'));
+        console.log(chalk.red('❌ ไม่สามารถอ่านข้อมูลโปรเจกต์ได้'));[cite: 4]
         process.exit(1);
       }
 
       const pluginManager = new PluginManager(projectPath);
       const plugins = await pluginManager.listPlugins();
 
-      console.log(chalk.cyan('\n📦 已安装的插件\n'));
-      console.log(chalk.gray(`项目: ${path.basename(projectPath)}\n`));
+      console.log(chalk.cyan('\n📦 ปลั๊กอินที่ติดตั้งแล้ว\n'));[cite: 4]
+      console.log(chalk.gray(`โปรเจกต์: ${path.basename(projectPath)}\n`));[cite: 4]
 
       if (plugins.length === 0) {
-        console.log(chalk.yellow('暂无插件'));
-        console.log(chalk.gray('\n使用 "novel-skills plugin:add <name>" 安装插件'));
-        console.log(chalk.gray('可用插件: authentic-voice\n'));
+        console.log(chalk.yellow('ยังไม่มีปลั๊กอินติดตั้งอยู่'));[cite: 4]
+        console.log(chalk.gray('\nใช้งาน "novelwrite plugin:add <name>" เพื่อติดตั้งปลั๊กอิน'));[cite: 4]
+        console.log(chalk.gray('ปลั๊กอินที่พร้อมใช้งาน: authentic-voice\n'));[cite: 4]
         return;
       }
 
       for (const plugin of plugins) {
-        console.log(chalk.yellow(`  ${plugin.name}`) + ` (v${plugin.version})`);
-        console.log(chalk.gray(`    ${plugin.description}`));
+        console.log(chalk.yellow(`  ${plugin.name}`) + ` (v${plugin.version})`);[cite: 4]
+        console.log(chalk.gray(`    ${plugin.description}`));[cite: 4]
 
         if (plugin.commands && plugin.commands.length > 0) {
-          console.log(chalk.gray(`    命令: ${plugin.commands.map(c => `/${c.id}`).join(', ')}`));
+          console.log(chalk.gray(`    คำสั่ง: ${plugin.commands.map(c => `/${c.id}`).join(', ')}`));[cite: 4]
         }
 
         if (plugin.skills && plugin.skills.length > 0) {
-          console.log(chalk.gray(`    Skills: ${plugin.skills.map(s => s.id).join(', ')}`));
+          console.log(chalk.gray(`    Skills: ${plugin.skills.map(s => s.id).join(', ')}`));[cite: 4]
         }
         console.log('');
       }
     } catch (error: any) {
       if (error.message === 'NOT_IN_PROJECT') {
-        console.log(chalk.red('\n❌ 当前目录不是 novelwrite 项目'));
-        console.log(chalk.gray('   请在项目根目录运行此命令\n'));
+        console.log(chalk.red('\n❌ ไดเรกทอรีปัจจุบันไม่ใช่โปรเจกต์ของ novelwrite'));[cite: 4]
+        console.log(chalk.gray('   กรุณารันคำสั่งนี้ที่โฟลเดอร์หลักของโปรเจกต์ (Root Directory)\n'));[cite: 4]
         process.exit(1);
       }
 
-      console.error(chalk.red('❌ 列出插件失败:'), error);
+      console.error(chalk.red('❌ แสดงรายการปลั๊กอินล้มเหลว:'), error);[cite: 4]
       process.exit(1);
     }
   });
 
 program
   .command('plugin:add <name>')
-  .description('安装插件')
+  .description('ติดตั้งปลั๊กอิน')[cite: 4]
   .action(async (name) => {
     try {
       const projectPath = await ensureProjectRoot();
       const projectInfo = await getProjectInfo(projectPath);
 
       if (!projectInfo) {
-        console.log(chalk.red('❌ 无法读取项目信息'));
+        console.log(chalk.red('❌ ไม่สามารถอ่านข้อมูลโปรเจกต์ได้'));[cite: 4]
         process.exit(1);
       }
 
-      console.log(chalk.cyan('\n📦 NovelWrite 插件安装\n'));
-      console.log(chalk.gray(`项目版本: ${projectInfo.version}\n`));
+      console.log(chalk.cyan('\n📦 การติดตั้งปลั๊กอิน NovelWrite\n'));[cite: 4]
+      console.log(chalk.gray(`เวอร์ชันโปรเจกต์: ${projectInfo.version}\n`));[cite: 4]
 
       const packageRoot = path.resolve(__dirname, '..');
       const builtinPluginPath = path.join(packageRoot, 'plugins', name);
 
       if (!await fs.pathExists(builtinPluginPath)) {
-        console.log(chalk.red(`❌ 插件 ${name} 未找到\n`));
-        console.log(chalk.gray('可用插件:'));
-        console.log(chalk.gray('  - authentic-voice (真实人声插件)'));
+        console.log(chalk.red(`❌ ไม่พบปลั๊กอินชื่อ ${name}\n`));[cite: 4]
+        console.log(chalk.gray('ปลั๊กอินที่พร้อมใช้งาน:'));[cite: 4]
+        console.log(chalk.gray('  - authentic-voice (ปลั๊กอินเสียงมนุษย์ที่สมจริง)'));[cite: 4]
         process.exit(1);
       }
 
-      const spinner = ora('正在安装插件...').start();
+      const spinner = ora('กำลังติดตั้งปลั๊กอิน...').start();[cite: 4]
       const pluginManager = new PluginManager(projectPath);
 
       await pluginManager.installPlugin(name, builtinPluginPath);
-      spinner.succeed(chalk.green('插件安装成功！\n'));
+      spinner.succeed(chalk.green('ติดตั้งปลั๊กอินสำเร็จเรียบร้อยแล้ว!\n'));[cite: 4]
 
     } catch (error: any) {
       if (error.message === 'NOT_IN_PROJECT') {
-        console.log(chalk.red('\n❌ 当前目录不是 novelwrite 项目'));
-        console.log(chalk.gray('   请在项目根目录运行此命令\n'));
+        console.log(chalk.red('\n❌ ไดเรกทอรีปัจจุบันไม่ใช่โปรเจกต์ของ novelwrite'));[cite: 4]
+        console.log(chalk.gray('   กรุณารันคำสั่งนี้ที่โฟลเดอร์หลักของโปรเจกต์ (Root Directory)\n'));[cite: 4]
         process.exit(1);
       }
 
-      console.log(chalk.red('\n❌ 安装插件失败'));
+      console.log(chalk.red('\n❌ ติดตั้งปลั๊กอินล้มเหลว'));[cite: 4]
       console.error(chalk.gray(error.message || error));
       console.log('');
       process.exit(1);
@@ -373,41 +373,41 @@ program
 
 program
   .command('plugin:remove <name>')
-  .description('移除插件')
+  .description('ลบปลั๊กอินออก')[cite: 4]
   .action(async (name) => {
     try {
       const projectPath = await ensureProjectRoot();
       const pluginManager = new PluginManager(projectPath);
 
-      console.log(chalk.cyan('\n📦 NovelWrite 插件移除\n'));
-      console.log(chalk.gray(`准备移除插件: ${name}\n`));
+      console.log(chalk.cyan('\n📦 การลบปลั๊กอิน NovelWrite\n'));[cite: 4]
+      console.log(chalk.gray(`เตรียมการลบปลั๊กอิน: ${name}\n`));[cite: 4]
 
-      const spinner = ora('正在移除插件...').start();
+      const spinner = ora('กำลังลบปลั๊กอิน...').start();[cite: 4]
       await pluginManager.removePlugin(name);
-      spinner.succeed(chalk.green('插件移除成功！\n'));
+      spinner.succeed(chalk.green('ลบปลั๊กอินสำเร็จเรียบร้อยแล้ว!\n'));[cite: 4]
     } catch (error: any) {
       if (error.message === 'NOT_IN_PROJECT') {
-        console.log(chalk.red('\n❌ 当前目录不是 novelwrite 项目'));
-        console.log(chalk.gray('   请在项目根目录运行此命令\n'));
+        console.log(chalk.red('\n❌ ไดเรกทอรีปัจจุบันไม่ใช่โปรเจกต์ของ novelwrite'));[cite: 4]
+        console.log(chalk.gray('   กรุณารันคำสั่งนี้ที่โฟลเดอร์หลักของโปรเจกต์ (Root Directory)\n'));[cite: 4]
         process.exit(1);
       }
 
-      console.log(chalk.red('\n❌ 移除插件失败'));
+      console.log(chalk.red('\n❌ ลบปลั๊กอินล้มเหลว'));[cite: 4]
       console.error(chalk.gray(error.message || error));
       console.log('');
       process.exit(1);
     }
   });
 
-// upgrade 命令 - 升级现有项目
+// คำสั่ง upgrade - อัปเกรดโปรเจกต์ปัจจุบัน
 program
   .command('upgrade')
-  .option('--commands', '更新命令文件')
-  .option('--skills', '更新 Skills 文件')
-  .option('--knowledge-base', '更新知识库系统')
-  .option('--all', '更新所有内容')
-  .option('-y, --yes', '跳过确认提示')
-  .description('升级现有项目到最新版本')
+  .option('--commands', 'อัปเดตไฟล์คำสั่ง')[cite: 4]
+  .option('--skills', 'อัปเดตไฟล์ทักษะ (Skills)')[cite: 4]
+  .option('--knowledge-base', 'อัปเดตระบบคลังความรู้')[cite: 4]
+  .option('--all', 'อัปเดตเนื้อหาทั้งหมด')[cite: 4]
+  .option('-y, --yes', 'ข้ามขั้นตอนการกดยืนยัน')[cite: 4]
+  .description('อัปเกรดโปรเจกต์ปัจจุบันเป็นเวอร์ชันล่าสุด处理')[cite: 4]
   .action(async (options) => {
     const projectPath = process.cwd();
     const packageRoot = path.resolve(__dirname, '..');
@@ -415,16 +415,16 @@ program
     try {
       const configPath = path.join(projectPath, '.specify', 'config.json');
       if (!await fs.pathExists(configPath)) {
-        console.log(chalk.red('❌ 当前目录不是 novel-writer-skills 项目'));
+        console.log(chalk.red('❌ ไดเรกทอรีปัจจุบันไม่ใช่โปรเจกต์ของ novel-writer-skills'));[cite: 4]
         process.exit(1);
       }
 
       const config = await fs.readJson(configPath);
-      const projectVersion = config.version || '未知';
+      const projectVersion = config.version || 'ไม่ระบุ';[cite: 4]
 
-      console.log(chalk.cyan('\n📦 NovelWrite 项目升级\n'));
-      console.log(chalk.gray(`当前版本: ${projectVersion}`));
-      console.log(chalk.gray(`目标版本: ${getVersion()}\n`));
+      console.log(chalk.cyan('\n📦 การอัปเกรดโปรเจกต์ NovelWrite\n'));[cite: 4]
+      console.log(chalk.gray(`เวอร์ชันปัจจุบัน: ${projectVersion}`));[cite: 4]
+      console.log(chalk.gray(`เวอร์ชันเป้าหมาย: ${getVersion()}\n`));[cite: 4]
 
       let updateCommands = options.all || options.commands || false;
       let updateSkills = options.all || options.skills || false;
@@ -442,21 +442,21 @@ program
           {
             type: 'confirm',
             name: 'proceed',
-            message: '确认执行升级?',
+            message: 'คุณยืนยันที่จะดำเนินการอัปเกรดหรือไม่?',[cite: 4]
             default: true
           }
         ]);
 
         if (!answers.proceed) {
-          console.log(chalk.yellow('\n升级已取消'));
+          console.log(chalk.yellow('\nยกเลิกการอัปเกรดแล้ว'));[cite: 4]
           process.exit(0);
         }
       }
 
-      const spinner = ora('正在升级项目...').start();
+      const spinner = ora('กำลังอัปเกรดโปรเจกต์...').start();[cite: 4]
 
       if (updateCommands) {
-        spinner.text = '更新 Slash Commands...';
+        spinner.text = 'กำลังอัปเดต Slash Commands...';[cite: 4]
         const commandsSource = path.join(packageRoot, 'templates', 'commands');
         const commandsDest = path.join(projectPath, '.claude', 'commands');
         if (await fs.pathExists(commandsSource)) {
@@ -465,7 +465,7 @@ program
       }
 
       if (updateSkills) {
-        spinner.text = '更新 Agent Skills...';
+        spinner.text = 'กำลังอัปเดต Agent Skills...';[cite: 4]
         const skillsSource = path.join(packageRoot, 'templates', 'skills');
         const skillsDest = path.join(projectPath, '.claude', 'skills');
         if (await fs.pathExists(skillsSource)) {
@@ -474,7 +474,7 @@ program
       }
 
       if (updateKnowledgeBase) {
-        spinner.text = '更新知识库系统...';
+        spinner.text = 'กำลังอัปเดตระบบคลังความรู้...';[cite: 4]
         const knowledgeBaseSource = path.join(packageRoot, 'templates', 'knowledge-base');
         const knowledgeBaseDest = path.join(projectPath, '.claude', 'knowledge-base');
         if (await fs.pathExists(knowledgeBaseSource)) {
@@ -485,38 +485,37 @@ program
       config.version = getVersion();
       await fs.writeJson(configPath, config, { spaces: 2 });
 
-      spinner.succeed(chalk.green('升级完成！\n'));
+      spinner.succeed(chalk.green('อัปเกรดเสร็จสิ้นเรียบร้อยแล้ว!\n'));[cite: 4]
 
-      console.log(chalk.cyan('✨ 升级内容:'));
-      if (updateCommands) console.log('  • Slash Commands 已更新');
-      if (updateSkills) console.log('  • Agent Skills 已更新');
-      if (updateKnowledgeBase) console.log('  • 知识库系统 已更新（包括 styles/ 和 requirements/）');
-      console.log(`  • 版本号: ${projectVersion} → ${getVersion()}`);
+      console.log(chalk.cyan('✨ รายการอัปเกรด:'));[cite: 4]
+      if (updateCommands) console.log('  • อัปเดต Slash Commands เรียบร้อยแล้ว');[cite: 4]
+      if (updateSkills) console.log('  • อัปเดต Agent Skills เรียบร้อยแล้ว');[cite: 4]
+      if (updateKnowledgeBase) console.log('  • อัปเดตระบบคลังความรู้เรียบร้อยแล้ว (รวมถึงโฟลเดอร์ styles/ และ requirements/)');[cite: 4]
+      console.log(`  • หมายเลขเวอร์ชันเปลี่ยนจาก: ${projectVersion} → ${getVersion()}`);[cite: 4]
 
     } catch (error) {
-      console.error(chalk.red('\n❌ 升级失败:'), error);
+      console.error(chalk.red('\n❌ การอัปเกรดล้มเหลว:'), error);[cite: 4]
       process.exit(1);
     }
   });
 
-// 自定义帮助信息
+// กำหนดข้อความช่วยเหลือเพิ่มเติม (Custom Help Information)
 program.on('--help', () => {
   console.log('');
-  console.log(chalk.yellow('使用示例:'));
+  console.log(chalk.yellow('ตัวอย่างการใช้งาน:'));[cite: 4]
   console.log('');
-  console.log('  $ novelwrite init my-story      # 创建新项目');
-  console.log('  $ novelwrite init --here        # 在当前目录初始化');
-  console.log('  $ novelwrite check              # 检查环境');
-  console.log('  $ novelwrite plugin:list        # 列出插件');
+  console.log('  $ novelwrite init my-story      # สร้างโปรเจกต์ใหม่');[cite: 4]
+  console.log('  $ novelwrite init --here        # เริ่มต้นโปรเจกต์ในไดเรกทอรีปัจจุบัน');[cite: 4]
+  console.log('  $ novelwrite check              # ตรวจสอบสภาพแวดล้อมระบบ');[cite: 4]
+  console.log('  $ novelwrite plugin:list        # แสดงรายการปลั๊กอิน');[cite: 4]
   console.log('');
-  console.log(chalk.gray('更多信息: https://github.com/wordflowlab/novel-writer-skills'));
+  console.log(chalk.gray('ดูข้อมูลเพิ่มเติมได้ที่: https://github.com/wordflowlab/novel-writer-skills'));[cite: 4]
 });
 
-// 解析命令行参数
+// ประมวลผลอาร์กิวเมนต์จากบรรทัดคำสั่ง
 program.parse(process.argv);
 
-// 如果没有提供任何命令，显示帮助信息
+// หากไม่มีคำสั่งใดๆ ระบุเข้ามา ให้แสดงข้อความช่วยเหลือ
 if (!process.argv.slice(2).length) {
   program.outputHelp();
 }
-
